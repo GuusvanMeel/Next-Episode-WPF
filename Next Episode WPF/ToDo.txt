@@ -1,0 +1,2 @@
+﻿1.	For deleteseason, deleteshow etc. naast ze uit de json halen, ze ook van de pc verwijderen. wel emt de vraag of je het wil enzo.
+2.	

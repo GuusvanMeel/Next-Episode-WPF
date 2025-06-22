@@ -10,6 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DAL\DAL.csproj" />
+    <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
 
