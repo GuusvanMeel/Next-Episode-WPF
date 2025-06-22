@@ -20,5 +20,10 @@ namespace Next_Episode_WPF
         {
             InitializeComponent();
         }
+
+        private void Button_Click()
+        {
+
+        }
     }
 }
