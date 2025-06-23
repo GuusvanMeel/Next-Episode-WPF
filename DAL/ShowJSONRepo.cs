@@ -1,8 +1,6 @@
 ﻿using Interfaces.Entities;
 using Interfaces.interfaces;
 using System.Text.Json;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DAL
 {

@@ -1,9 +1,4 @@
 ﻿using Interfaces.interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL
 {
@@ -12,7 +7,7 @@ namespace DAL
         private readonly string logFilePath = Path.Combine(AppContext.BaseDirectory, "logs", "log.txt");
 
         public FileLogger()
-        {
+        {   
             Directory.CreateDirectory(Path.GetDirectoryName(logFilePath)!);
         }
 
@@ -34,7 +29,8 @@ namespace DAL
         }
 
         public void LogException(string context, Exception ex)
-        {   string type = ex.GetType().Name;
+        {
+            string type = ex.GetType().Name;
             string message = $"{context}: {type} — {ex.Message}";
             LogError(message);
         }

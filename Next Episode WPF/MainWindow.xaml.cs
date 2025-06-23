@@ -1,5 +1,4 @@
-﻿using Service;
-using System.Windows;
+﻿using System.Windows;
 
 namespace Next_Episode_WPF
 {
@@ -8,12 +7,10 @@ namespace Next_Episode_WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly ShowService _showService;
 
-        public MainWindow(ShowService showService)
+        public MainWindow()
         {
             InitializeComponent();
-            _showService = showService;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

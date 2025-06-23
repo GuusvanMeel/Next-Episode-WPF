@@ -1,33 +1,40 @@
 ﻿using DAL;
 using Interfaces.interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using Next_Episode_WPF;
 using Service;
+using System;
 using System.Windows;
-
-public partial class App : Application
+namespace Next_Episode_WPF // 👈 This must match App.xaml
 {
-    public static IServiceProvider? ServiceProvider { get; private set; }
-
-    protected override void OnStartup(StartupEventArgs e)
+    public partial class App : Application
     {
-        var services = new ServiceCollection();
+        public static IServiceProvider? ServiceProvider { get; private set; }
 
-        ConfigureServices(services);
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
 
-        ServiceProvider = services.BuildServiceProvider();
+            var services = new ServiceCollection();
 
-        var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-        mainWindow.Show();
-    }
+            ConfigureServices(services);
 
-    private void ConfigureServices(IServiceCollection services)
-    {
-        // Register your services and repos here
-        services.AddSingleton<ILoggerService, FileLogger>(); // example
-        services.AddSingleton<IShowRepo, ShowJSONRepo>();
-        services.AddSingleton<ShowService>();
-        services.AddSingleton<EpisodeService>();
-        services.AddSingleton<MainWindow>(); // important
+            ServiceProvider = services.BuildServiceProvider();
+
+            var testwindow = ServiceProvider.GetRequiredService<TestWindow>();
+            testwindow.Show();
+        }
+
+        private void ConfigureServices(IServiceCollection services)
+        {
+            // Register your services and repos here
+            services.AddSingleton<ILoggerService, FileLogger>(); // example
+            services.AddSingleton<ISettingsRepo, SettingsJSONRepo>(); // example
+            services.AddSingleton<IShowRepo, ShowJSONRepo>();
+            services.AddSingleton<ShowService>();
+            services.AddSingleton<PlayerService>();
+            services.AddSingleton<EpisodeService>();
+            services.AddSingleton<MainWindow>(); // important
+            services.AddSingleton<TestWindow>();
+        }
     }
 }

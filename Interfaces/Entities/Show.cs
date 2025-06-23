@@ -9,7 +9,7 @@
         public bool IsFinished { get; set; }
         public Show()
         {
-            
+
         }
     }
 }

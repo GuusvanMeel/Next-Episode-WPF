@@ -1,0 +1,84 @@
+﻿<Window x:Class="Next_Episode_WPF.TestWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Feature Tester" Height="500" Width="500"
+        WindowStartupLocation="CenterScreen">
+    <StackPanel Margin="15" VerticalAlignment="Top">
+
+        <!-- Add Show from Folder -->
+        <GroupBox Header="0. Add New Show From Folder" Margin="0,0,0,10">
+            <StackPanel Margin="10" Orientation="Horizontal">
+                <Button Content="Add Show from Folder"
+                        Click="AddShowFromFolder_Click"
+                        Width="200"/>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="4. Actions" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" Margin="10" VerticalAlignment="Center" >
+                <Button Content="▶ Play Episode"
+                Click="Play_Click"
+                Width="120"
+                Margin="0,0,10,0"/>
+                <Button Content="✔ Mark as Watched"
+                Click="MarkWatched_Click"
+                Width="150"
+                Margin="0,0,10,0"/>
+                <Button Content="⚙ Set Video Player Path"
+                Click="SetVideoPlayerPath_Click"
+                Width="180"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Show Selection -->
+        <GroupBox Header="1. Select a Show" Margin="0,0,0,10">
+            <StackPanel Margin="10">
+                <ComboBox x:Name="ShowSelector"
+                          Width="300"
+                          SelectionChanged="ShowSelector_SelectionChanged"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Episode Info -->
+        <GroupBox Header="2. Current Episode Info" Margin="0,0,0,10">
+            <StackPanel Margin="10">
+                <TextBlock x:Name="CurrentEpisodeBlock"
+                           FontSize="14"
+                           FontWeight="Bold"
+                           Text="No episode selected." />
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Watch Progress -->
+        <GroupBox Header="3. Watch Progress" Margin="0,0,0,10">
+            <StackPanel Margin="10">
+                <ProgressBar x:Name="ProgressBar"
+                             Height="20"
+                             Width="300"
+                             Minimum="0"
+                             Maximum="100"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Actions -->
+        <GroupBox Header="4. Actions" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Button Content="▶ Play Episode"
+                        Click="Play_Click"
+                        Width="120"
+                        Margin="0,0,10,0"/>
+                <Button Content="✔ Mark as Watched"
+                        Click="MarkWatched_Click"
+                        Width="150"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Log / Feedback -->
+        <GroupBox Header="5. Log Output">
+            <TextBlock x:Name="LogOutput"
+                       TextWrapping="Wrap"
+                       Margin="10"
+                       Height="60"
+                       VerticalAlignment="Top"/>
+        </GroupBox>
+    </StackPanel>
+</Window>
