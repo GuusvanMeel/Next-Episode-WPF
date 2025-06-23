@@ -9,7 +9,7 @@ namespace Service
 
         private readonly ILoggerService logger = _logger;
 
-        public ResponseBody LogEpisodeWatched(Show show)
+        public ResponseBody<Show> LogEpisodeWatched(Show show)
         {
             try
             {
@@ -18,44 +18,52 @@ namespace Service
                 if (justwatched == null)
                 {
                     logger.LogInfo($"LogEpisodeWatched: Current episode not found in '{show.Name}'.");
-                    return ResponseBody.Fail("Could not find current episode.");
+                    return ResponseBody<Show>.Fail("Could not find current episode.");
                 }
 
                 justwatched.WhenWatched = DateTime.Now;
 
                 Episode? next = GetNextEpisode(show, justwatched);
-                show.CurrentEpisodePath = next?.FilePath;
+                if (next == null)
+                {
+                    show.IsFinished = true;
+                    logger.LogInfo($"LogEpisodeWatched: '{show.Name}' marked as finished.");
+                    ShowRepo.SaveShow(show);
+                    return ResponseBody<Show>.Ok(show);
+                }
+                show.CurrentEpisodePath = next.FilePath;
 
                 ShowRepo.SaveShow(show);
 
-                return ResponseBody.Ok();
+                return ResponseBody<Show>.Ok(show);
             }
             catch (Exception ex)
             {
-                logger.LogException(nameof(FindCurrentEpisode), ex);
+                logger.LogException(nameof(LogEpisodeWatched), ex);
 
-                return ResponseBody.Fail("Unexpected error while logging episode.");
+                return ResponseBody<Show>.Fail("Unexpected error while logging episode.");
             }
         }
 
-        public ResponseBody SetCurrentEpisode(Episode episode)
+        public ResponseBody<Show> SetCurrentEpisode(Episode episode)
         {
             try
             {
                 Show? show = ShowRepo.GetShow(episode.ShowName);
                 if (show == null)
                 {
-                    return ResponseBody.Fail("could not find show");
+                    return ResponseBody<Show>.Fail("could not find show");
                 }
                 show.CurrentEpisodePath = episode.FilePath;
+                logger.LogInfo($"SetCurrentEpisode: '{episode.FilePath}' set as current for show '{episode.ShowName}'.");
                 ShowRepo.SaveShow(show);
-                return ResponseBody.Ok();
+                return ResponseBody<Show>.Ok(show);
             }
             catch (Exception ex)
             {
                 logger.LogException(nameof(SetCurrentEpisode), ex);
 
-                return ResponseBody.Fail("Unexpected error while setting new current episode.");
+                return ResponseBody<Show>.Fail("Unexpected error while setting new current episode.");
             }
         }
 
