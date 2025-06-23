@@ -2,6 +2,6 @@
 {
     public class AppSettings
     {
-        public string VideoPlayerPath { get; set; }
+        public string? VideoPlayerPath { get; set; }
     }
 }

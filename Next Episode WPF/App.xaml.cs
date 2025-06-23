@@ -20,8 +20,8 @@ namespace Next_Episode_WPF // 👈 This must match App.xaml
 
             ServiceProvider = services.BuildServiceProvider();
 
-            var testwindow = ServiceProvider.GetRequiredService<TestWindow>();
-            testwindow.Show();
+            var HomeWindow = ServiceProvider.GetRequiredService<HomeWindow>();
+            HomeWindow.Show();
         }
 
         private void ConfigureServices(IServiceCollection services)
@@ -33,8 +33,7 @@ namespace Next_Episode_WPF // 👈 This must match App.xaml
             services.AddSingleton<ShowService>();
             services.AddSingleton<PlayerService>();
             services.AddSingleton<EpisodeService>();
-            services.AddSingleton<MainWindow>(); // important
-            services.AddSingleton<TestWindow>();
+            services.AddSingleton<HomeWindow>();
         }
     }
 }

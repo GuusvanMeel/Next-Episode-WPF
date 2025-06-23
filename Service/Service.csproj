@@ -6,9 +6,11 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<NoWarn>NU1701</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="MediaToolkit" Version="1.1.0.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
 	</ItemGroup>
 
