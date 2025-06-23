@@ -1,2 +1,88 @@
-﻿1.	For deleteseason, deleteshow etc. naast ze uit de json halen, ze ook van de pc verwijderen. wel emt de vraag of je het wil enzo.
-2.	
+﻿from pathlib import Path
+
+# Define the path to the TODO file again after reset
+todo_path = Path("/mnt/data/todo.txt")
+
+# Define the content to append
+new_todo_content = """✅ TODO LIST (Project Features & Improvements)
+1. Delete Confirmation & File Removal
+    When deleting a show or season:
+        Prompt the user: "Do you also want to remove the files from your PC?"
+        If confirmed, delete the physical folder or files (using the stored file paths).
+        Still remove the metadata from the JSON regardless.
+
+2. Visual Feedback in UI
+    Show progress percentage visually (e.g., progress bar) using GetWatchProgress.
+    Possibly color-code watched/unwatched episodes in episode lists.
+
+3. Mark Episode as Unwatched
+    Allow user to right-click or select an episode and "mark as unwatched."
+    Implementation: simply set WhenWatched = null.
+
+4. Mark Show as Unfinished
+    If a user wants to reset the "IsFinished" state (e.g., rewatching), provide a way to:
+        Set IsFinished = false.
+        Possibly reset WhenWatched on all episodes if needed.
+
+5. Bulk Progress Reset (Optional)
+    Add "Reset Progress" option for a show.
+        Sets all WhenWatched values to null.
+        Resets CurrentEpisodePath to first episode.
+        Resets IsFinished = false.
+
+7. Data Validation / Recovery (Future)
+    If a show JSON file becomes corrupted or incomplete:
+        Handle errors gracefully.
+        Optionally offer to restore or delete the invalid show.
+
+8. Episode Duration (Optional)
+    Add DurationMinutes to Episode class.
+    Calculate total watch time for a show or remaining time.
+
+9. Search or Filter in UI (Optional)
+    Search shows by name or status (e.g., finished/in progress).
+    Filter by "watched," "unwatched," etc.
+
+🛠️ ShowService — Missing Core Features:
+
+    Add a new show
+
+    Delete a show (and optionally delete all files from disk with confirmation)
+
+    Get all shows (for dropdowns, etc.)
+
+    Get a show by name (probably done)
+
+    Rename show? (optional)
+
+🛠️ Season Management (possibly ShowService or new SeasonService)
+
+    Add a season to an existing show
+
+    Delete a season
+
+    (Optional) Rename or edit metadata for seasons
+
+📁 File & Video Handling
+
+    Scan a folder recursively for video files (e.g., .mkv, .mp4)
+
+    Match files to episodes/seasons
+
+    Assign them a filepath and inject them into the show model
+
+    Open a video file in the user's default video player (e.g., with Process.Start())
+
+📦 Optional, but Useful
+
+    Support bulk importing shows from a folder
+
+    Handle episodes with missing data gracefully
+
+    Flag duplicates or inconsistencies in episode numbers
+
+    Mark shows as incomplete if data is missing
+
+    Add statistics for shows and seasons, how fast did you watch etc.
+
+    Unit tests (just a few for safety)
