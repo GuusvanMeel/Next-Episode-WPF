@@ -1,88 +1,85 @@
-﻿from pathlib import Path
+﻿Next Episode - Updated TODO List
 
-# Define the path to the TODO file again after reset
-todo_path = Path("/mnt/data/todo.txt")
+Core Features / Functionality
 
-# Define the content to append
-new_todo_content = """✅ TODO LIST (Project Features & Improvements)
-1. Delete Confirmation & File Removal
-    When deleting a show or season:
-        Prompt the user: "Do you also want to remove the files from your PC?"
-        If confirmed, delete the physical folder or files (using the stored file paths).
-        Still remove the metadata from the JSON regardless.
+- Add Show from Folder with recursive season detection and video duration extraction (using MediaToolkit).
+- Logging of errors and info throughout service methods.
+- Show selection and display current/next episode info.
+- Watch progress calculation and display.
+- Mark episode as watched and update current episode.
+- Mark episode as unwatched (set WhenWatched = null).
+- Mark show as unfinished (reset IsFinished and optionally WhenWatched).
+- Bulk progress reset:
+    - Set all WhenWatched values to null.
+    - Reset CurrentEpisodePath to first episode.
+    - Reset IsFinished = false.
+- Play current episode (open in default video player).
+- Delete confirmation and file removal:
+    - Prompt user if they want to delete associated files.
+    - Always remove metadata.
+- Data validation / recovery:
+    - Detect corrupted JSON files.
+    - Offer to repair or delete broken shows.
 
-2. Visual Feedback in UI
-    Show progress percentage visually (e.g., progress bar) using GetWatchProgress.
-    Possibly color-code watched/unwatched episodes in episode lists.
+Episode Number Picker UI
 
-3. Mark Episode as Unwatched
-    Allow user to right-click or select an episode and "mark as unwatched."
-    Implementation: simply set WhenWatched = null.
+- Display example filename.
+- Provide radio buttons for common regex numbering schemes.
+- Provide textbox for custom regex input.
+- Confirm button to submit regex scheme.
+- Prevent layout shift when toggling custom input.
+- Place confirm button and textbox on same row.
+- Add short description text at top of window.
+- Reset custom input each time "Custom" is selected.
+- Add placeholder behavior to custom input (clears on click, resets on blur).
+- Regex input validation and user feedback.
+- Apply user-selected regex to parse episode numbers and order accordingly.
 
-4. Mark Show as Unfinished
-    If a user wants to reset the "IsFinished" state (e.g., rewatching), provide a way to:
-        Set IsFinished = false.
-        Possibly reset WhenWatched on all episodes if needed.
+Integration
 
-5. Bulk Progress Reset (Optional)
-    Add "Reset Progress" option for a show.
-        Sets all WhenWatched values to null.
-        Resets CurrentEpisodePath to first episode.
-        Resets IsFinished = false.
+- Integrate Episode Number Picker into Add Show workflow.
+- Call regex picker after folder selection but before adding show.
+- Use selected regex to extract episode numbers.
 
-7. Data Validation / Recovery (Future)
-    If a show JSON file becomes corrupted or incomplete:
-        Handle errors gracefully.
-        Optionally offer to restore or delete the invalid show.
+UI / UX Improvements
 
-8. Episode Duration (Optional)
-    Add DurationMinutes to Episode class.
-    Calculate total watch time for a show or remaining time.
+- Main window layout with show selector, episode info, poster, progress stats, logs, and control buttons.
+- Handle “no shows” case with proper message and disabled controls.
+- Visual feedback:
+    - Show watch progress as a progress bar.
+    - Color-code watched/unwatched episodes.
+- Search or filter in UI (e.g., by name, watched, finished).
+- Style improvements (postpone until core functionality stable).
 
-9. Search or Filter in UI (Optional)
-    Search shows by name or status (e.g., finished/in progress).
-    Filter by "watched," "unwatched," etc.
+Show Manager View
 
-🛠️ ShowService — Missing Core Features:
+- Implement Show Manager view.
+- Edit or rename shows.
+- Delete shows (with optional file deletion).
+- Add, delete, or rename seasons.
 
-    Add a new show
+Settings View
 
-    Delete a show (and optionally delete all files from disk with confirmation)
+- Implement settings/configuration window.
 
-    Get all shows (for dropdowns, etc.)
+File & Metadata Handling
 
-    Get a show by name (probably done)
+- Scan folders recursively for video files (.mkv, .mp4, etc.).
+- Match files to episodes using regex.
+- Store full paths for episodes.
+- Extract duration for each video and assign to episodes.
+- Add optional DurationMinutes field.
+- Calculate total/remaining watch time per show.
 
-    Rename show? (optional)
+Enhancements / Future
 
-🛠️ Season Management (possibly ShowService or new SeasonService)
-
-    Add a season to an existing show
-
-    Delete a season
-
-    (Optional) Rename or edit metadata for seasons
-
-📁 File & Video Handling
-
-    Scan a folder recursively for video files (e.g., .mkv, .mp4)
-
-    Match files to episodes/seasons
-
-    Assign them a filepath and inject them into the show model
-
-    Open a video file in the user's default video player (e.g., with Process.Start())
-
-📦 Optional, but Useful
-
-    Support bulk importing shows from a folder
-
-    Handle episodes with missing data gracefully
-
-    Flag duplicates or inconsistencies in episode numbers
-
-    Mark shows as incomplete if data is missing
-
-    Add statistics for shows and seasons, how fast did you watch etc.
-
-    Unit tests (just a few for safety)
+- Handle more complex folder structures (multi-season folders).
+- Support more video extensions if needed.
+- Improve filename parsing for edge cases.
+- Save user regex preferences per show.
+- Support multiple audio tracks/subtitles (future).
+- Detect duplicate episodes or inconsistencies.
+- Flag incomplete shows (missing episodes).
+- Show statistics: time spent watching, watch speed, etc.
+- Unit and integration tests for services and UI.
+- Bulk import shows from a root folder.
