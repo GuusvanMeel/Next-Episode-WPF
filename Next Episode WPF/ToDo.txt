@@ -6,41 +6,25 @@ MUST HAVE
 -------------------------------------
 
 [Core Logic | Must]
-- Add Show from Folder with recursive season detection. //DONE
-- Extract video duration using MediaToolkit or similar. //DONE CAN BE IMPROVED
-- Store full paths for episodes. //DONE
-- Match files to episodes using regex scheme. //DONE
 - Watch progress calculation and updating. 
-- Mark episode as watched (set WhenWatched). //DONE
 - Mark show as unfinished (reset IsFinished and optionally WhenWatched).
 - Detect and recover corrupted JSON files.
 - Confirm + delete show metadata (and optionally episode files).
 
 [UI | Must]
 - Responsive layouts: prevent content cutoffs in small screens.
-- EpisodeNumberPicker with: //DONE
+- EpisodeNumberPicker with:
     - Example filename display.
     - Regex scheme options.
     - Custom regex input.
     - Regex preview feedback.
-- Confirm button and custom textbox aligned on same row. //DONE
-- Highlight active episode in episode selection view. //DONE
-- ChangeEpisodeWindow with TreeView layout and scroll support. //DONE
 
 [UX | Must]
-- Display current episode info in readable format (season, episode, duration). 
-- Button states tied to show availability (disabled when no show selected).
-- End-of-show handling: notify when show is finished and offer actions.
-- Add Show flow:
-    - Folder picker → regex picker → confirm → show added
+- End-of-show handling: notify when show is finished and offer actions. 
 
 [Backend | Must]
-- Save regex selection per show.
-- Prevent accidental overwrites (sanitize show names).
-- Logging (info + error) across services.
-- Save and load all show metadata consistently.
-- Extract duration and assign to episode.
-- Load show names on app launch, or if shows exist.
+- Logging (info + error) across services. 
+- Save and load all show metadata consistently. 
 
 -------------------------------------
 SHOULD HAVE
@@ -50,17 +34,10 @@ SHOULD HAVE
 - Poster image area (blank placeholder for now).
 - Watch progress bar (based on episodes watched).
 - Cleaner default styles (padding, font sizes, margins).
-- Search box or filter in the UI (watched, finished, etc.).
 - Settings window for app preferences.
 
-[UX | Should]
-- Prompt to delete episode files when deleting show.
-- Toggle for hiding/showing watched episodes.
-- Animated expand/collapse for seasons in TreeView.
-
 [Backend | Should]
-- Store and reuse previous regex selection for consistency.
-- Extract and store DurationMinutes for stats.
+- Store and reuse previous regex selection for consistency, custom regex moet gesaved worden en als optie laten zien.
 - Prevent duplicate episodes in parsing.
 - Handle more complex folder structures.
 
@@ -102,3 +79,21 @@ WON’T HAVE (for now)
 [UX | Won’t]
 - Real-time cloud sync / Trakt integration.
 - Cross-device sync.
+
+-------------------------------------
+✅ DONE
+-------------------------------------
+- Add Show from Folder with recursive season detection.
+- Extract video duration using MediaToolkit or similar. 
+- Store full paths for episodes.
+- Match files to episodes using regex scheme.
+- Mark episode as watched (set WhenWatched).
+- Prevent accidental overwrites (sanitize show names).
+- Extract duration and assign to episode.
+- Load show names on app launch, or if shows exist.
+- Confirm button and custom textbox aligned on same row.
+- Highlight active episode in episode selection view.
+- ChangeEpisodeWindow with TreeView layout and scroll support.
+- Display current episode info in readable format (season, episode, duration).
+- Button states tied to show availability (disabled when no show selected).
+- Add Show flow: Folder picker → regex picker → confirm → show added
