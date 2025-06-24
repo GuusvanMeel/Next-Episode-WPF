@@ -33,18 +33,23 @@ namespace Next_Episode_WPF
             Option7.Checked += AnyPresetOption_Checked;
             CustomOption.Checked += CustomOption_Checked;
 
-            regexMap[Option1] = @"[eE](\d{1,3})";               // E12
-            regexMap[Option2] = @"[sS](\d{1,2})[eE](\d{1,3})";   // S01E12
-            regexMap[Option3] = @"Episode[\s_]?(\d{1,3})";       // Episode 12
-            regexMap[Option4] = @"(\d{1,2})x(\d{1,3})";          // 1x12
-            regexMap[Option5] = @"(?<!\d)(\d{1,3})(?!\d)";       // Just a number
-            regexMap[Option6] = @"[eE][pP](\d{1,3})";            // EP12
-            regexMap[Option7] = @"-\s*(\d{1,3})";                // - 12
+            regexMap[Option1] = @"(?<!\w)[eE](\d+)";                            // E12
+            regexMap[Option2] = @"[sS](\d{1,2})[\s\-]?[eE](\d+)";               // S01E12 or S01-E12
+            regexMap[Option3] = @"\bEpisode[\s_]?(\d+)\b";                      // Episode 12 or Episode_12
+            regexMap[Option4] = @"\b(\d{1,2})x(\d+)\b";                         // 1x12
+            regexMap[Option5] = @"(?<=\D|^)(\d+)(?=\D|$)";                      // Number, but not inside 1080p etc
+            regexMap[Option6] = @"\b[eE][pP](\d+)\b";                           // Ep12
+            regexMap[Option7] = @"(?<=\s)-\s*(\d+)";                            // - 12 (but ignore stuff like Movie-1080p)
+
+
+            UpdateRegexPreview();
+
         }
 
         private void AnyPresetOption_Checked(object sender, RoutedEventArgs e)
         {
             CustomRegexTextBox.Visibility = Visibility.Hidden;
+            UpdateRegexPreview();
         }
 
         private void CustomOption_Checked(object sender, RoutedEventArgs e)
@@ -58,11 +63,71 @@ namespace Next_Episode_WPF
         {
             CustomRegexTextBox.Text = "";
         }
+        private void CustomRegexTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (CustomOption.IsChecked == true)
+            {
+                UpdateRegexPreview();
+            }
+        }
 
         private void Confirm_Click(object sender, RoutedEventArgs e)
         {
-            string selectedPattern;
+            string? selectedPattern = GetSelectedRegexPattern();
 
+            if (string.IsNullOrWhiteSpace(selectedPattern))
+            {
+                MessageBox.Show("Please enter or select a regex pattern.", "Input Required", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                _ = new Regex(selectedPattern); // Validate regex
+                SelectedRegex = selectedPattern;
+                DialogResult = true;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Invalid regex pattern:\n\n{ex.Message}", "Regex Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private void UpdateRegexPreview()
+        {
+            string? pattern = GetSelectedRegexPattern();
+
+            if (string.IsNullOrWhiteSpace(pattern))
+            {
+                RegexPreviewTextBlock.Text = "";
+                return;
+            }
+
+            try
+            {
+                var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+                var match = regex.Match(SampleFileTextBlock.Text);
+
+                if (match.Success)
+                {
+                    string matchedValue = match.Groups.Count > 1 ? match.Groups[1].Value : match.Value;
+                    RegexPreviewTextBlock.Text = $"✓ Match: {matchedValue}";
+                    RegexPreviewTextBlock.Foreground = Brushes.Green;
+                }
+                else
+                {
+                    RegexPreviewTextBlock.Text = "⚠ No match found in sample filename.";
+                    RegexPreviewTextBlock.Foreground = Brushes.OrangeRed;
+                }
+            }
+            catch (Exception ex)
+            {
+                RegexPreviewTextBlock.Text = $"⚠ Invalid regex: {ex.Message}";
+                RegexPreviewTextBlock.Foreground = Brushes.Red;
+            }
+        }
+        private string? GetSelectedRegexPattern()
+        {
             if (CustomOption.IsChecked == true)
             {
                 string input = CustomRegexTextBox.Text.Trim();
@@ -70,34 +135,22 @@ namespace Next_Episode_WPF
                 if (string.IsNullOrWhiteSpace(input) || input == "enter the number scheme here")
                 {
                     MessageBox.Show("Please enter a regex pattern.", "Input Required", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
+                    return null;
                 }
 
-                selectedPattern = input;
-            }
-            else
-            {
-                var selected = regexMap.FirstOrDefault(pair => pair.Key.IsChecked == true);
-                if (selected.Key == null)
+                // If no capture group, wrap input safely
+                if (!input.Contains("("))
                 {
-                    MessageBox.Show("Please select a numbering scheme.", "Missing Selection", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
+                    input = $@"(?<=\D|^)({input})(?=\D|$)";
                 }
 
-                selectedPattern = selected.Value;
+               return input;
             }
 
-            try
-            {
-                _ = new Regex(selectedPattern); // single point of validation
-                SelectedRegex = selectedPattern;
-                this.DialogResult = true;
-                this.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Invalid regex pattern:\n\n" + ex.Message, "Regex Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            var selected = regexMap.FirstOrDefault(pair => pair.Key.IsChecked == true);
+            return selected.Key != null ? selected.Value : null;
         }
+
+
     }
 }

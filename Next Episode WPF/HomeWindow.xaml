@@ -40,13 +40,13 @@
             <Button x:Name="WatchNextButton"
                     Content="▶ Watch the next episode"
                     Width="300"
-                    Margin="0,10,0,10"/>
+                    Margin="0,10,0,10" Click="WatchNextButton_Click"/>
 
             <!-- Match width of watch next -->
             <Button x:Name="MarkWatchedButton"
                     Content="✔ Mark as watched"
                     Width="300"
-                    Margin="0,0,0,10"/>
+                    Margin="0,0,0,10" Click="MarkWatchedButton_Click"/>
 
             <Button x:Name="ChangeEpisodeButton"
                     Content="Change current episode"

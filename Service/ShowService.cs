@@ -19,13 +19,36 @@ namespace Service
             this.logger = logger;
         }
 
+        public ResponseBody<Show> GetShowFromName(string showname)
+        {
+            try
+            {
+               Show? show = ShowRepo.GetShow(showname);
+                if(show != null)
+                {
+                    return ResponseBody<Show>.Ok(show);
+                }
+                return ResponseBody<Show>.Fail($"couldnt find show with the name {showname}");
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(nameof(GetShowFromName), ex);
+                return ResponseBody<Show>.Fail("Unexpected error while getting show by name.");
+            }
+        }
         public ResponseBody<Show> AddShowFromFolder(string folder, string numberingscheme)
         {
             try
             {
+                string showName = Path.GetFileName(folder.TrimEnd(Path.DirectorySeparatorChar));
+                Show? existing = ShowRepo.GetShow(showName);
+                if (existing != null)
+                {
+                    return ResponseBody<Show>.Fail($"Show '{showName}' already exists.");
+                }
                 using var engine = new Engine();
                 var seasons = new List<Season>();
-                string showName = Path.GetFileName(folder.TrimEnd(Path.DirectorySeparatorChar));
+                
 
                 var regex = new Regex(numberingscheme, RegexOptions.IgnoreCase); // for future episode numbering use
 

@@ -173,7 +173,7 @@ namespace DAL
         {
             try
             {
-                string path = Path.Combine(showsDirectory + show.Name + ".json");
+                string path = Path.Combine(showsDirectory, show.Name + ".json");
                 string json = JsonSerializer.Serialize(show, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(path, json);
                 return true;
