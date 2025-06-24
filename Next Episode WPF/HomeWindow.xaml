@@ -28,7 +28,8 @@
             <!-- Show Selector -->
             <ComboBox x:Name="ShowSelector"
                       Width="300"
-                      Margin="0,0,0,10">
+                      Margin="0,0,0,10"
+                      SelectionChanged="ShowSelector_ValueChanged">
             </ComboBox>
 
             <!-- Indented Next episode texts -->

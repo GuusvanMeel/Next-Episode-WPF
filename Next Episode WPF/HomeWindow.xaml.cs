@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 
 namespace Next_Episode_WPF
@@ -27,7 +28,7 @@ namespace Next_Episode_WPF
             this.episodeService = epservice;
             this.playerService = playservice;
             this.showService = showservice;
-            RefeshUI();
+            RefreshUI();
         }
 
 
@@ -63,7 +64,23 @@ namespace Next_Episode_WPF
         }
         private void ChangeEpisodeButton_Click(object sender, RoutedEventArgs e)
         {
+            if (CurrentShow is null)
+            {
+                LogOutput.Text = "No show is currently selected.";
+                return;
+            }
 
+            var picker = new ChangeEpisodeWindow(CurrentShow);
+            bool? pickerResult = picker.ShowDialog();
+
+            if (pickerResult == true && picker.selectedEpisode != null)
+            {
+                var result = episodeService.SetCurrentEpisode(picker.selectedEpisode);
+                if (HandleFailure(result)) return;
+
+                LoadSelectedShow();
+                UpdateNExtEpisodeInfo();
+            }
         }
 
         private void AddShowButton_Click(object sender, RoutedEventArgs e)
@@ -95,10 +112,10 @@ namespace Next_Episode_WPF
                 if (HandleFailure(addShowResult)) return;
 
                 LogOutput.Text = $"Show '{addShowResult.Data!.Name}' added successfully.";
-                RefeshUI();
+                RefreshUI();
             }
         }
-        private void RefeshUI()
+        private void RefreshUI()
         {
             LoadShowNames();
             LoadSelectedShow();
@@ -196,7 +213,23 @@ namespace Next_Episode_WPF
             }
             return false;
         }
+        private void ShowSelector_ValueChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateCurrentShowUI();
+        }
+        private void UpdateCurrentShowUI()
+        {
+            LoadSelectedShow();
 
- 
+            bool hasShow = CurrentShow != null;
+            WatchNextButton.IsEnabled = hasShow;
+            MarkWatchedButton.IsEnabled = hasShow;
+            ChangeEpisodeButton.IsEnabled = hasShow;
+
+            UpdateNExtEpisodeInfo();
+        }
+
+
+
     }
 }

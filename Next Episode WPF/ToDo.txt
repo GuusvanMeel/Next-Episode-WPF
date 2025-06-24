@@ -1,85 +1,104 @@
-﻿Next Episode - Updated TODO List
+﻿=== ✅ NEXT EPISODE — TODO LIST ===
+Organized by MoSCoW priority and category (UI, UX, Backend, etc.)
 
-Core Features / Functionality
+-------------------------------------
+MUST HAVE
+-------------------------------------
 
-- Add Show from Folder with recursive season detection and video duration extraction (using MediaToolkit).
-- Logging of errors and info throughout service methods.
-- Show selection and display current/next episode info.
-- Watch progress calculation and display.
-- Mark episode as watched and update current episode.
-- Mark episode as unwatched (set WhenWatched = null).
+[Core Logic | Must]
+- Add Show from Folder with recursive season detection. //DONE
+- Extract video duration using MediaToolkit or similar. //DONE CAN BE IMPROVED
+- Store full paths for episodes. //DONE
+- Match files to episodes using regex scheme. //DONE
+- Watch progress calculation and updating. 
+- Mark episode as watched (set WhenWatched). //DONE
 - Mark show as unfinished (reset IsFinished and optionally WhenWatched).
-- Bulk progress reset:
-    - Set all WhenWatched values to null.
-    - Reset CurrentEpisodePath to first episode.
-    - Reset IsFinished = false.
-- Play current episode (open in default video player).
-- Delete confirmation and file removal:
-    - Prompt user if they want to delete associated files.
-    - Always remove metadata.
-- Data validation / recovery:
-    - Detect corrupted JSON files.
-    - Offer to repair or delete broken shows.
+- Detect and recover corrupted JSON files.
+- Confirm + delete show metadata (and optionally episode files).
 
-Episode Number Picker UI
+[UI | Must]
+- Responsive layouts: prevent content cutoffs in small screens.
+- EpisodeNumberPicker with: //DONE
+    - Example filename display.
+    - Regex scheme options.
+    - Custom regex input.
+    - Regex preview feedback.
+- Confirm button and custom textbox aligned on same row. //DONE
+- Highlight active episode in episode selection view. //DONE
+- ChangeEpisodeWindow with TreeView layout and scroll support. //DONE
 
-- Display example filename.
-- Provide radio buttons for common regex numbering schemes.
-- Provide textbox for custom regex input.
-- Confirm button to submit regex scheme.
-- Prevent layout shift when toggling custom input.
-- Place confirm button and textbox on same row.
-- Add short description text at top of window.
-- Reset custom input each time "Custom" is selected.
-- Add placeholder behavior to custom input (clears on click, resets on blur).
-- Regex input validation and user feedback.
-- Apply user-selected regex to parse episode numbers and order accordingly.
+[UX | Must]
+- Display current episode info in readable format (season, episode, duration). 
+- Button states tied to show availability (disabled when no show selected).
+- End-of-show handling: notify when show is finished and offer actions.
+- Add Show flow:
+    - Folder picker → regex picker → confirm → show added
 
-Integration
+[Backend | Must]
+- Save regex selection per show.
+- Prevent accidental overwrites (sanitize show names).
+- Logging (info + error) across services.
+- Save and load all show metadata consistently.
+- Extract duration and assign to episode.
+- Load show names on app launch, or if shows exist.
 
-- Integrate Episode Number Picker into Add Show workflow.
-- Call regex picker after folder selection but before adding show.
-- Use selected regex to extract episode numbers.
+-------------------------------------
+SHOULD HAVE
+-------------------------------------
 
-UI / UX Improvements
+[UI | Should]
+- Poster image area (blank placeholder for now).
+- Watch progress bar (based on episodes watched).
+- Cleaner default styles (padding, font sizes, margins).
+- Search box or filter in the UI (watched, finished, etc.).
+- Settings window for app preferences.
 
-- Main window layout with show selector, episode info, poster, progress stats, logs, and control buttons.
-- Handle “no shows” case with proper message and disabled controls.
-- Visual feedback:
-    - Show watch progress as a progress bar.
-    - Color-code watched/unwatched episodes.
-- Search or filter in UI (e.g., by name, watched, finished).
-- Style improvements (postpone until core functionality stable).
+[UX | Should]
+- Prompt to delete episode files when deleting show.
+- Toggle for hiding/showing watched episodes.
+- Animated expand/collapse for seasons in TreeView.
 
-Show Manager View
+[Backend | Should]
+- Store and reuse previous regex selection for consistency.
+- Extract and store DurationMinutes for stats.
+- Prevent duplicate episodes in parsing.
+- Handle more complex folder structures.
 
-- Implement Show Manager view.
-- Edit or rename shows.
-- Delete shows (with optional file deletion).
-- Add, delete, or rename seasons.
+[Logic | Should]
+- Mark show as finished automatically if no next episode exists.
+- Flag missing/incomplete episodes in UI.
 
-Settings View
+-------------------------------------
+COULD HAVE
+-------------------------------------
 
-- Implement settings/configuration window.
+[UI | Could]
+- Poster image scraping (e.g., from TMDB, MyAnimeList).
+- Show total time watched, remaining time, etc.
+- Color-code watched vs unwatched episodes.
+- Custom app themes (dark mode, etc.).
+- Recently watched activity feed.
 
-File & Metadata Handling
-
-- Scan folders recursively for video files (.mkv, .mp4, etc.).
-- Match files to episodes using regex.
-- Store full paths for episodes.
-- Extract duration for each video and assign to episodes.
-- Add optional DurationMinutes field.
-- Calculate total/remaining watch time per show.
-
-Enhancements / Future
-
-- Handle more complex folder structures (multi-season folders).
-- Support more video extensions if needed.
-- Improve filename parsing for edge cases.
-- Save user regex preferences per show.
-- Support multiple audio tracks/subtitles (future).
-- Detect duplicate episodes or inconsistencies.
-- Flag incomplete shows (missing episodes).
-- Show statistics: time spent watching, watch speed, etc.
-- Unit and integration tests for services and UI.
+[UX | Could]
 - Bulk import shows from a root folder.
+- Per-show episode ordering override.
+- Drag-and-drop show folder into app.
+- Show edit/rename UI.
+
+[Backend | Could]
+- Detect and resolve naming inconsistencies across episodes.
+- Support for more video formats (e.g., .avi, .mov).
+- Optional: parse subtitle or audio tracks for metadata.
+
+-------------------------------------
+WON’T HAVE (for now)
+-------------------------------------
+
+[UI | Won’t]
+- Mobile/responsive layout.
+- Inline metadata editing for episodes.
+- Episode previews or embedded player.
+
+[UX | Won’t]
+- Real-time cloud sync / Trakt integration.
+- Cross-device sync.

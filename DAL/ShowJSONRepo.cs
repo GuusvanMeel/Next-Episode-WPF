@@ -7,6 +7,7 @@ namespace DAL
     public class ShowJSONRepo : IShowRepo
     {
         private readonly string showsDirectory = Path.Combine(AppContext.BaseDirectory, "data", "shows");
+
         private readonly ILoggerService logger;
 
         public ShowJSONRepo(ILoggerService logger)
@@ -17,6 +18,7 @@ namespace DAL
             }
             this.logger = logger;
         }
+
         public List<Show> LoadAllShows()
         {
             try
@@ -51,6 +53,7 @@ namespace DAL
                 return new();
             }
         }
+
         public List<string> GetAllShowNames()
         {
             try
@@ -69,6 +72,7 @@ namespace DAL
                 return new();
             }
         }
+
         public Show? GetShow(string showname)
         {
 
@@ -120,7 +124,6 @@ namespace DAL
                 logger.LogException("DeleteShow", ex);
                 return false;
             }
-
         }
 
         public bool AddSeason(Season season, string showname)
@@ -141,7 +144,6 @@ namespace DAL
                 logger.LogException("AddSeason", ex);
                 return false;
             }
-
         }
 
         public bool DeleteSeason(int number, string showname)
@@ -169,6 +171,7 @@ namespace DAL
                 return false;
             }
         }
+
         public bool SaveShow(Show show)
         {
             try
