@@ -19,7 +19,7 @@ namespace Service
                 {
                     return ResponseBody.Fail(settings.Message ?? "Failed to load settings.");
                 }
-                string playerPath = settings.Data!.VideoPlayerPath;
+                string playerPath = settings.Data!.VideoPlayerPath!;
 
                 if (!File.Exists(videofilepath))
                 {

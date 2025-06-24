@@ -3,6 +3,7 @@ using Interfaces.interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Service;
 using System;
+using System.IO;
 using System.Windows;
 namespace Next_Episode_WPF // 👈 This must match App.xaml
 {
@@ -15,6 +16,9 @@ namespace Next_Episode_WPF // 👈 This must match App.xaml
             base.OnStartup(e);
 
             var services = new ServiceCollection();
+
+            string ffmpegPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg");
+            Xabe.FFmpeg.FFmpeg.SetExecutablesPath(ffmpegPath);
 
             ConfigureServices(services);
 

@@ -76,19 +76,19 @@ namespace Next_Episode_WPF
 
             if (pickerResult == true)
             {
-                // Retrieve user's numbering scheme from picker, then call AddShowFromFolder with it
-                //string numberingScheme = picker.NumberingScheme;
+                //Retrieve user's numbering scheme from picker, then call AddShowFromFolder with it
+                string numberingScheme = picker.SelectedRegex;
 
-                //var addShowResult = showService.AddShowFromFolder(selectedFolder, numberingScheme);
-                //if (!addShowResult.Success)
-                //{
-                //    LogOutput.Text = addShowResult.Message;
-                //}
-                //else
-                //{
-                //    LogOutput.Text = $"Show '{addShowResult.Data!.Name}' added successfully.";
-                //    LoadShowNames(); // Refresh UI show list
-                //}
+                var addShowResult = showService.AddShowFromFolder(selectedFolder, numberingScheme);
+                if (!addShowResult.Success)
+                {
+                    LogOutput.Text = addShowResult.Message;
+                }
+                else
+                {
+                    LogOutput.Text = $"Show '{addShowResult.Data!.Name}' added successfully.";
+                    LoadShowNames(); // Refresh UI show list
+                }
             }
         }
     }
