@@ -10,6 +10,14 @@ MUST HAVE
 - Mark show as unfinished (reset IsFinished and optionally WhenWatched).
 - Detect and recover corrupted JSON files.
 - Confirm + delete show metadata (and optionally episode files).
+- go back episode, when you want to go back same as skip but reverse.
+- ge actual episode name. 
+- movies aswell.
+- mvoies make a list, so those movies play after each other.
+- voor film lijst randomizer.
+- auto delete when complete. option in settings and safeguard.
+- favourite episodes / movies. 
+
 
 [UI | Must]
 - Responsive layouts: prevent content cutoffs in small screens.
