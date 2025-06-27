@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DAL
 {
-    internal class ActivityLogJSONRepo : IActivityLogRepo
+    public class ActivityLogJSONRepo : IActivityLogRepo
     {
         private readonly string Logfile = Path.Combine(AppContext.BaseDirectory, "data", "ActivityLog.json");
 
@@ -22,7 +22,7 @@ namespace DAL
                 Directory.CreateDirectory(settingsDir);
 
             if (!File.Exists(Logfile))
-                File.WriteAllText(Logfile, "{}"); // create empty JSON file
+                File.WriteAllText(Logfile, "[]"); // create empty JSON file
             this.logger = logger;
         }
         public ResponseBody DeleteAll()
@@ -37,10 +37,13 @@ namespace DAL
                 List<ActivityLog> logs = new();
                 if (File.Exists(Logfile))
                 {
-                    string existingJson = File.ReadAllText(Logfile);
-                    logs = JsonSerializer.Deserialize<List<ActivityLog>>(existingJson) ?? new List<ActivityLog>();
+                    string json = File.ReadAllText(Logfile).Trim();
+                    if (!string.IsNullOrEmpty(json) && json.StartsWith("["))
+                    {
+                        logs = JsonSerializer.Deserialize<List<ActivityLog>>(json) ?? new List<ActivityLog>();
+                    }
                 }
-              return ResponseBody<List<ActivityLog>>.Ok(logs);
+                return ResponseBody<List<ActivityLog>>.Ok(logs);
             }
             catch(Exception ex)
             {
@@ -77,6 +80,29 @@ namespace DAL
             }
 
         }
+
+        public ResponseBody<ActivityLog> GetLast()
+        {
+            try
+            {
+                var result = GetAll();
+
+                if (!result.Success || result.Data == null || result.Data.Count == 0)
+                {
+                    return ResponseBody<ActivityLog>.Fail(result.Message ?? "No activity logs found.");
+                }
+
+                // Return the last activity based on timestamp
+                var lastLog = result.Data.OrderByDescending(log => log.When).First();
+                return ResponseBody<ActivityLog>.Ok(lastLog);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Failed to get last activity log: " + ex.Message);
+                return ResponseBody<ActivityLog>.Fail("Could not retrieve last activity log.");
+            }
+        }
+
 
         public ResponseBody<List<ActivityLog>> GetRecent(int count)
         {

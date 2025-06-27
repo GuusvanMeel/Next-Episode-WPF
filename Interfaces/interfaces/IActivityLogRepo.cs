@@ -19,5 +19,6 @@ namespace Interfaces.interfaces
         ResponseBody<List<ActivityLog>> GetForShow(string showTitle); // Filtered by show
 
         ResponseBody DeleteAll(); // Optional: clear log (for debugging or reset)
+        ResponseBody<ActivityLog> GetLast();
     }
 }

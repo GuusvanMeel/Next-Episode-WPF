@@ -1,5 +1,6 @@
 ﻿using Interfaces.Entities;
 using Service;
+using Service.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,16 +20,19 @@ namespace Next_Episode_WPF
         private readonly PlayerService playerService;
 
         private readonly ShowService showService;
+        private readonly ActivityService activityService;
 
         private Show? CurrentShow { get; set; }
 
-        public HomeWindow(EpisodeService epservice, PlayerService playservice, ShowService showservice)
+        public HomeWindow(EpisodeService epservice, PlayerService playservice, ShowService showservice, ActivityService activityservice)
         {
             InitializeComponent();
             this.episodeService = epservice;
             this.playerService = playservice;
             this.showService = showservice;
+            this.activityService = activityservice;
             RefreshUI();
+            FillRecentActivity();
         }
 
 
@@ -47,6 +51,10 @@ namespace Next_Episode_WPF
             var logEpisode = episodeService.LogEpisodeWatched(CurrentShow!);
             if (HandleFailure(logEpisode)) return;
 
+            var logactivity = activityService.LogEpisodeWatched(episode.ShowName, episode.Season, episode.Number);
+            if (HandleFailure(logactivity)) return;
+            UpdateActivity(logactivity.Data!);
+           
             UpdateNExtEpisodeInfo();
         }
         private void MarkWatchedButton_Click(object sender, RoutedEventArgs e)
@@ -59,7 +67,6 @@ namespace Next_Episode_WPF
 
             var logEpisode = episodeService.LogEpisodeWatched(CurrentShow!);
             if (HandleFailure(logEpisode)) return;
-
             UpdateNExtEpisodeInfo();
         }
         private void ChangeEpisodeButton_Click(object sender, RoutedEventArgs e)
@@ -112,6 +119,9 @@ namespace Next_Episode_WPF
                 if (HandleFailure(addShowResult)) return;
 
                 LogOutput.Text = $"Show '{addShowResult.Data!.Name}' added successfully.";
+
+                var activitylog = activityService.AddedShow(addShowResult.Data!.Name);
+                if (HandleFailure(activitylog)) return;
                 RefreshUI();
             }
         }
@@ -186,23 +196,18 @@ namespace Next_Episode_WPF
                 return;
             }
 
-            var season = nextEpisode.Season.ToString("D2");
-            var episode = nextEpisode.Number.ToString("D2");
-            var minutes = (int)nextEpisode.Duration.TotalMinutes;
-            var seconds = nextEpisode.Duration.Seconds;
-            var duration = $"{minutes}m {seconds:D2}s";
 
-            NextEpisodeInfo.Text = $"Season {season}, Episode {episode}\nDuration: {duration}";
+            NextEpisodeInfo.Text = UIFormatter.FormatNextEpisodeInfo(nextEpisode);
 
         }
         private bool HandleFailure<T>(ResponseBody<T> response)
         {
-            if (!response.Success)
+            if (!response.Success || response.Data == null)
             {
                 LogOutput.Text = response.Message ?? "An unknown error occurred.";
-                return true; // indicates failure
+                return true;
             }
-            return false; // means it's OK to continue
+            return false;
         }
         private bool HandleFailure(ResponseBody response)
         {
@@ -228,7 +233,21 @@ namespace Next_Episode_WPF
 
             UpdateNExtEpisodeInfo();
         }
+        private void FillRecentActivity()
+        {
+            var activities = activityService.GetActivity();
+            if (HandleFailure(activities)) return;
+            if (activities.Data == null) return;
+            foreach (ActivityLog a in activities.Data)
+            {
+                UpdateActivity(a);
+            }
 
+        }
+        private void UpdateActivity(ActivityLog a)
+        {
+            RecentActivityPanel.Children.Add(new TextBlock { Text = UIFormatter.FormatActivity(a) });
+        }
 
 
     }

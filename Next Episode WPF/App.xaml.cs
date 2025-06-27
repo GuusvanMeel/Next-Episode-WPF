@@ -1,4 +1,5 @@
 ﻿using DAL;
+using Interfaces.Entities;
 using Interfaces.interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Service;
@@ -34,10 +35,12 @@ namespace Next_Episode_WPF // 👈 This must match App.xaml
             services.AddSingleton<ILoggerService, FileLogger>(); // example
             services.AddSingleton<ISettingsRepo, SettingsJSONRepo>(); // example
             services.AddSingleton<IShowRepo, ShowJSONRepo>();
+            services.AddSingleton<IActivityLogRepo, ActivityLogJSONRepo>();
             services.AddSingleton<ShowService>();
             services.AddSingleton<PlayerService>();
             services.AddSingleton<EpisodeService>();
             services.AddSingleton<HomeWindow>();
+            services.AddSingleton<ActivityService>();
         }
     }
 }

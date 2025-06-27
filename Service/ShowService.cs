@@ -2,6 +2,7 @@
 using Interfaces.interfaces;
 using MediaToolkit;
 using MediaToolkit.Model;
+using Service.Helper;
 using System.Text.RegularExpressions;
 
 namespace Service
@@ -13,10 +14,10 @@ namespace Service
         private readonly ILoggerService logger;
         string[] videoExtensions = { ".mkv", ".mp4", ".avi", ".mov" };
 
-        public ShowService(IShowRepo showRepo, ILoggerService logger)
+        public ShowService(IShowRepo showRepo, ILoggerService _logger)
         {
             this.ShowRepo = showRepo;
-            this.logger = logger;
+            this.logger = _logger;
         }
 
         public ResponseBody<Show> GetShowFromName(string showname)
@@ -32,8 +33,7 @@ namespace Service
             }
             catch (Exception ex)
             {
-                logger.LogException(nameof(GetShowFromName), ex);
-                return ResponseBody<Show>.Fail("Unexpected error while getting show by name.");
+                return ExceptionHelper.FailWithLog<Show>(logger, nameof(GetShowFromName), ex, "Unexpected error");
             }
         }
         public ResponseBody<Show> AddShowFromFolder(string folder, string numberingscheme)
@@ -107,8 +107,7 @@ namespace Service
             }
             catch (Exception ex)
             {
-                logger.LogException(nameof(AddShowFromFolder), ex);
-                return ResponseBody<Show>.Fail("Unexpected error while adding show.");
+                return ExceptionHelper.FailWithLog<Show>(logger, nameof(AddShowFromFolder), ex, "Unexpected error");
             }
         }
         public ResponseBody<string> GetFirstVideoFile(string folderPath)
@@ -139,8 +138,7 @@ namespace Service
             }
             catch (Exception ex)
             {
-                logger.LogException(nameof(GetFirstVideoFile), ex);
-                return ResponseBody<string>.Fail("Unexpected error while searching for video files.");
+                return ExceptionHelper.FailWithLog<string>(logger, nameof(GetFirstVideoFile), ex, "Unexpected error");
             }
         }
 
@@ -154,8 +152,7 @@ namespace Service
             }
             catch (Exception ex)
             {
-                logger.LogException(nameof(GetAllShowNames), ex);
-                return ResponseBody<List<string>>.Fail("Failed to get show names.");
+                return ExceptionHelper.FailWithLog<List<string>>(logger, nameof(GetAllShowNames), ex, "Unexpected error");
             }
         }
         private List<Episode> GetEpisodesFromFolder(string folder, int seasonNumber, string showName, Engine engine, Regex numberRegex, out TimeSpan totalDuration)

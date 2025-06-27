@@ -1,12 +1,13 @@
 ﻿using Interfaces.Entities;
 using Interfaces.interfaces;
+using Service.Helper;
 using System.Diagnostics;
 
 namespace Service
 {
-    public class PlayerService(ILoggerService logger, ISettingsRepo settingsRepo)
+    public class PlayerService(ILoggerService _logger, ISettingsRepo settingsRepo)
     {
-        private readonly ILoggerService Logger = logger;
+        private readonly ILoggerService logger = _logger;
 
         private readonly ISettingsRepo SettingsRepo = settingsRepo;
 
@@ -47,8 +48,8 @@ namespace Service
             }
             catch (Exception ex)
             {
-                Logger.LogException(nameof(StartVideo), ex);
-                return ResponseBody.Fail("Failed to start the video");
+                return ExceptionHelper.FailWithLog(logger, nameof(StartVideo), ex, "Unexpected error");
+
             }
         }
         public ResponseBody SetVideoPlayer(string path)
@@ -71,8 +72,7 @@ namespace Service
             }
             catch (Exception ex)
             {
-                Logger.LogException(nameof(SetVideoPlayer), ex);
-                return ResponseBody.Fail("Failed to set the video player");
+                return ExceptionHelper.FailWithLog(logger, nameof(SetVideoPlayer), ex, "Unexpected error");
             }
         }
         private bool SettingsLoadFailed(ResponseBody<AppSettings> settings)

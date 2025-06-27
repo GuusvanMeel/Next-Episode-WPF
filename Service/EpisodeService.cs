@@ -1,5 +1,6 @@
 ﻿using Interfaces.Entities;
 using Interfaces.interfaces;
+using Service.Helper;
 
 namespace Service
 {
@@ -39,9 +40,7 @@ namespace Service
             }
             catch (Exception ex)
             {
-                logger.LogException(nameof(LogEpisodeWatched), ex);
-
-                return ResponseBody<Show>.Fail("Unexpected error while logging episode.");
+                return ExceptionHelper.FailWithLog<Show>(logger, nameof(LogEpisodeWatched), ex, "Unexpected error");
             }
         }
 
@@ -61,9 +60,7 @@ namespace Service
             }
             catch (Exception ex)
             {
-                logger.LogException(nameof(SetCurrentEpisode), ex);
-
-                return ResponseBody<Show>.Fail("Unexpected error while setting new current episode.");
+                return ExceptionHelper.FailWithLog<Show>(logger, nameof(SetCurrentEpisode), ex, "Unexpected error");
             }
         }
 
@@ -82,9 +79,7 @@ namespace Service
             }
             catch (Exception ex)
             {
-                logger.LogException(nameof(GetCurrentEpisode), ex);
-
-                return ResponseBody<Episode>.Fail("Unexpected error while retrieving current episode.");
+                return ExceptionHelper.FailWithLog<Episode>(logger, nameof(GetCurrentEpisode), ex, "Unexpected error");
             }
         }
 
@@ -92,9 +87,9 @@ namespace Service
         {
             try
             {
-                ResponseBody<Episode> currentResult = GetCurrentEpisode(show);
-                if (!currentResult.Success)
-                    return ResponseBody<Episode>.Fail(currentResult.Message ?? "Current Episode Error");
+                var currentResult = GetCurrentEpisode(show);
+                var check = ResponseHelper.Check(currentResult);
+                if (!check.Success) return check;
 
                 Episode? next = GetNextEpisode(show, currentResult.Data!);
                 if (next == null)
@@ -106,9 +101,7 @@ namespace Service
             }
             catch (Exception ex)
             {
-                logger.LogException(nameof(GetNextEpisode), ex);
-
-                return ResponseBody<Episode>.Fail("Unexpected error while retrieving the next episode.");
+                return ExceptionHelper.FailWithLog<Episode>(logger, nameof(GetNextEpisode), ex, "Unexpected error");
             }
         }
 
@@ -125,9 +118,7 @@ namespace Service
             }
             catch (Exception ex)
             {
-                logger.LogException(nameof(GetWatchedEpisodes), ex);
-
-                return ResponseBody<List<Episode>>.Fail("Unexpected error while retrieving watched episodes.");
+                return ExceptionHelper.FailWithLog<List<Episode>>(logger, nameof(GetWatchedEpisodes), ex, "Unexpected error");
             }
         }
 
@@ -146,7 +137,7 @@ namespace Service
             {
                 logger.LogException(nameof(GetUnWatchedEpisodes), ex);
 
-                return ResponseBody<List<Episode>>.Fail("Unexpected error while retrieving unwatched episodes.");
+                return ExceptionHelper.FailWithLog<List<Episode>>(logger, nameof(GetUnWatchedEpisodes), ex, "Unexpected error");
             }
         }
 
