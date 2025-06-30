@@ -29,7 +29,7 @@ namespace Service
                 return ExceptionHelper.FailWithLog(logger, nameof(LogShowFinished), ex, "Failed to log activity");
             }
         }
-        public ResponseBody AddedShow(string showtitle)
+        public ResponseBody<ActivityLog> AddedShow(string showtitle)
         {
             try
             {
@@ -41,11 +41,15 @@ namespace Service
                 };
 
                 var result = ActivityRepo.Log(log);
-                return ResponseHelper.Check(result);
+                if(result.Success == true)
+                {
+                    return ResponseBody<ActivityLog>.Ok(log);
+                }
+                return ResponseBody<ActivityLog>.Fail(result.Message ?? "unknown error");
             }
             catch (Exception ex)
             {
-                return ExceptionHelper.FailWithLog(logger, nameof(LogShowFinished), ex, "Failed to log activity");
+                return ExceptionHelper.FailWithLog<ActivityLog>(logger, nameof(LogShowFinished), ex, "Failed to log activity");
             }
         }
         public ResponseBody ResetShowProgress(string showtitle)

@@ -12,5 +12,6 @@ namespace Interfaces.interfaces
         public bool AddSeason(Season season, string showname);
         public bool DeleteSeason(int number, string showname);
         public bool SaveShow(Show show);
+        public List<string> GetShowNamesInApp();
     }
 }

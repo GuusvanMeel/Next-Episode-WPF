@@ -66,8 +66,9 @@
         <StackPanel Grid.Column="1" Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Center" Width="250" >
 
             <Border Background="#DDD" Width="200" Height="200" Margin="0,0,0,10">
-                <TextBlock Text="Poster of show" HorizontalAlignment="Center" VerticalAlignment="Center" FontStyle="Italic" Foreground="#666"/>
+                <Image x:Name="PosterImage" Stretch="UniformToFill"/>
             </Border>
+
 
             <StackPanel>
                 <TextBlock x:Name="WatchPercentageLabel" Text="Watch Progress: 0%" FontWeight="Bold" Margin="0,0,0,5" TextAlignment="Center"/>

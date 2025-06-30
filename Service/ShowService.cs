@@ -36,11 +36,10 @@ namespace Service
                 return ExceptionHelper.FailWithLog<Show>(logger, nameof(GetShowFromName), ex, "Unexpected error");
             }
         }
-        public ResponseBody<Show> AddShowFromFolder(string folder, string numberingscheme)
+        public ResponseBody<Show> AddShowFromFolder(string folder, string numberingscheme, string showName)
         {
             try
             {
-                string showName = Path.GetFileName(folder.TrimEnd(Path.DirectorySeparatorChar));
                 Show? existing = ShowRepo.GetShow(showName);
                 if (existing != null)
                 {
@@ -226,6 +225,11 @@ namespace Service
                 .Where(f => videoExtensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase))
                 .OrderBy(f => f)
                 .ToList();
+        }
+        public ResponseBody<List<string>> GetAllShowNamesFromApp()
+        {
+            var names =  ShowRepo.GetShowNamesInApp();
+            return ResponseBody<List<string>>.Ok(names);
         }
     }
 }

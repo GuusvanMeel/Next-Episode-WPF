@@ -4,6 +4,7 @@ using Service.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -23,7 +24,6 @@ namespace Next_Episode_WPF
         private readonly ActivityService activityService;
 
         private Show? CurrentShow { get; set; }
-
         public HomeWindow(EpisodeService epservice, PlayerService playservice, ShowService showservice, ActivityService activityservice)
         {
             InitializeComponent();
@@ -90,6 +90,7 @@ namespace Next_Episode_WPF
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
         private void AddShowButton_Click(object sender, RoutedEventArgs e)
         {
             using var dialog = new FolderBrowserDialog();
@@ -114,15 +115,28 @@ namespace Next_Episode_WPF
             {
                 //Retrieve user's numbering scheme from picker, then call AddShowFromFolder with it
                 string numberingScheme = picker.SelectedRegex;
+                var names = showService.GetAllShowNamesFromApp();
+                if (HandleFailure(names)) return;
 
-                var addShowResult = showService.AddShowFromFolder(selectedFolder, numberingScheme);
-                if (HandleFailure(addShowResult)) return;
+                var namepicker = new ShowNamePickerWindow(names.Data!);
+                bool? showpickerresult = namepicker.ShowDialog(); 
 
-                LogOutput.Text = $"Show '{addShowResult.Data!.Name}' added successfully.";
+                if (showpickerresult == true)
+                {
 
-                var activitylog = activityService.AddedShow(addShowResult.Data!.Name);
-                if (HandleFailure(activitylog)) return;
-                RefreshUI();
+
+                    var addShowResult = showService.AddShowFromFolder(selectedFolder, numberingScheme, namepicker.SelectedShowName);
+                    if (HandleFailure(addShowResult)) return;
+
+                    LogOutput.Text = $"Show '{addShowResult.Data!.Name}' added successfully.";
+
+                    var activitylog = activityService.AddedShow(addShowResult.Data!.Name);
+                    if (HandleFailure(activitylog)) return;
+
+                    UpdateActivity(activitylog.Data!);
+
+                    RefreshUI();
+                }
             }
         }
         private void RefreshUI()
@@ -238,7 +252,7 @@ namespace Next_Episode_WPF
             var activities = activityService.GetActivity();
             if (HandleFailure(activities)) return;
             if (activities.Data == null) return;
-            foreach (ActivityLog a in activities.Data)
+            foreach (ActivityLog a in activities.Data) ;
             {
                 UpdateActivity(a);
             }
@@ -246,8 +260,9 @@ namespace Next_Episode_WPF
         }
         private void UpdateActivity(ActivityLog a)
         {
-            RecentActivityPanel.Children.Add(new TextBlock { Text = UIFormatter.FormatActivity(a) });
+            RecentActivityPanel.Children.Insert(0,new TextBlock { Text = UIFormatter.FormatActivity(a) });
         }
+
 
 
     }
