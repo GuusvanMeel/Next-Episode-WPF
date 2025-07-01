@@ -3,11 +3,13 @@ using Service;
 using Service.Helper;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media.Imaging;
 
 namespace Next_Episode_WPF
 {
@@ -33,6 +35,7 @@ namespace Next_Episode_WPF
             this.activityService = activityservice;
             RefreshUI();
             FillRecentActivity();
+
         }
 
 
@@ -170,6 +173,7 @@ namespace Next_Episode_WPF
             }
 
             CurrentShow = result.Data!;
+            LoadPoster(CurrentShow.PosterFileName);
             UpdateNExtEpisodeInfo();
         }
 
@@ -252,7 +256,7 @@ namespace Next_Episode_WPF
             var activities = activityService.GetActivity();
             if (HandleFailure(activities)) return;
             if (activities.Data == null) return;
-            foreach (ActivityLog a in activities.Data) ;
+            foreach (ActivityLog a in activities.Data)
             {
                 UpdateActivity(a);
             }
@@ -262,6 +266,28 @@ namespace Next_Episode_WPF
         {
             RecentActivityPanel.Children.Insert(0,new TextBlock { Text = UIFormatter.FormatActivity(a) });
         }
+        private void LoadPoster(string posterpath)
+        {
+            try
+            {
+                string postersDirectory = Path.Combine(AppContext.BaseDirectory, "data", "posters");
+                string posterPath = Path.Combine(postersDirectory, posterpath);
+
+                if (File.Exists(posterPath))
+                {
+                    PosterImage.Source = new BitmapImage(new Uri(posterPath, UriKind.Absolute));
+                }
+                else
+                {
+                    PosterImage.Source = null; // or set to a placeholder image if preferred
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to load poster: " + ex.Message);
+            }
+        }
+
 
 
 

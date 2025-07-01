@@ -58,12 +58,19 @@ namespace DAL
         {
             try
             {
-                string[] shows = Directory.GetFiles(showsDirectory);
+                string[] showFiles = Directory.GetFiles(showsDirectory, "*.json");
                 List<string> names = new();
-                foreach (string show in shows)
+
+                foreach (string file in showFiles)
                 {
-                    names.Add(Path.GetFileNameWithoutExtension(show));
+                    string json = File.ReadAllText(file);
+                    Show? show = JsonSerializer.Deserialize<Show>(json);
+                    if (show != null && !string.IsNullOrWhiteSpace(show.Name))
+                    {
+                        names.Add(show.Name);
+                    }
                 }
+
                 return names;
             }
             catch (Exception ex)
@@ -72,6 +79,7 @@ namespace DAL
                 return new();
             }
         }
+
 
         public Show? GetShow(string showname)
         {
@@ -100,6 +108,7 @@ namespace DAL
             try
             {
                 string safeName = GetSafeShowFileName(show.Name);
+                show.PosterFileName = safeName + ".jpg";
                 string filePath = Path.Combine(showsDirectory, safeName + ".json");
                 string json = JsonSerializer.Serialize(show, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(filePath, json);
