@@ -8,7 +8,7 @@
         public string? CurrentEpisodePath { get; set; }
         public bool IsFinished { get; set; }
         public TimeSpan Duration { get; set; }
-        public string PosterFileName { get; set; }
+        public required string PosterFileName { get; set; }
 
         public Show()
         {

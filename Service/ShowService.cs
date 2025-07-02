@@ -91,7 +91,8 @@ namespace Service
                     Seasons = seasons,
                     IsFinished = false,
                     CurrentEpisodePath = allEpisodes.First().FilePath,
-                    Duration = totalDuration
+                    Duration = totalDuration,
+                    PosterFileName = showName
                 };
 
                 bool success = ShowRepo.AddShow(newShow);

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,15 +25,17 @@ namespace Next_Episode_WPF
 
         private readonly ShowService showService;
         private readonly ActivityService activityService;
+        private readonly UserService UserService;
 
         private Show? CurrentShow { get; set; }
-        public HomeWindow(EpisodeService epservice, PlayerService playservice, ShowService showservice, ActivityService activityservice)
+        public HomeWindow(EpisodeService epservice, PlayerService playservice, ShowService showservice, ActivityService activityservice, UserService userservice)
         {
             InitializeComponent();
             this.episodeService = epservice;
             this.playerService = playservice;
             this.showService = showservice;
             this.activityService = activityservice;
+            this.UserService = userservice;
             RefreshUI();
             FillRecentActivity();
 
@@ -288,8 +291,14 @@ namespace Next_Episode_WPF
             }
         }
 
-
-
-
+        private void Statistics_Click(object sender, RoutedEventArgs e)
+        {
+            var statsResponse = UserService.GetUserStats();
+            if (HandleFailure(statsResponse)) return;
+            
+                var statsWindow = new StatisticsWindow(statsResponse.Data!);
+                statsWindow.ShowDialog();
+            
+        }
     }
 }

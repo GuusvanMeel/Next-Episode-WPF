@@ -36,11 +36,13 @@ namespace Next_Episode_WPF // 👈 This must match App.xaml
             services.AddSingleton<ISettingsRepo, SettingsJSONRepo>(); // example
             services.AddSingleton<IShowRepo, ShowJSONRepo>();
             services.AddSingleton<IActivityLogRepo, ActivityLogJSONRepo>();
+            services.AddSingleton<IUserStatsRepo, UserStatsJSONRepo>();
             services.AddSingleton<ShowService>();
             services.AddSingleton<PlayerService>();
             services.AddSingleton<EpisodeService>();
             services.AddSingleton<HomeWindow>();
             services.AddSingleton<ActivityService>();
+            services.AddSingleton<UserService>();
         }
     }
 }
