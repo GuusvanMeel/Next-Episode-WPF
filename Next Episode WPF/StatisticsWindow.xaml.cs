@@ -1,4 +1,5 @@
 ﻿using Interfaces.Entities;
+using System;
 using System.Windows;
 
 namespace Next_Episode_WPF
@@ -17,7 +18,9 @@ namespace Next_Episode_WPF
 
         private void LoadStats()
         {
-            TotalTimeWatchedLabel.Text = stats.TotalTimeWatched.ToString();
+            var rounded = TimeSpan.FromSeconds(Math.Ceiling(stats.TotalTimeWatched.TotalSeconds));
+
+            TotalTimeWatchedLabel.Text = $" {rounded.Hours}h {rounded.Minutes}m {rounded.Seconds}s";
             EpisodesWatchedLabel.Text = stats.EpsWatched.ToString();
             ShowsCompletedLabel.Text = stats.ShowsCompleted.ToString();
         }

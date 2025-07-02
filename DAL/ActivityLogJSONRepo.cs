@@ -153,5 +153,10 @@ namespace DAL
                 return ResponseBody.Fail("Could not write activity log.");
             }
         }
+
+        public bool MarkEpAsWatched(ActivityLog entry)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

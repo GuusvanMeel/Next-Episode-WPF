@@ -14,9 +14,7 @@ using System.Windows.Media.Imaging;
 
 namespace Next_Episode_WPF
 {
-    /// <summary>
-    /// Interaction logic for HomeWindow.xaml
-    /// </summary>
+   
     public partial class HomeWindow : Window
     {
         private readonly EpisodeService episodeService;
@@ -25,7 +23,7 @@ namespace Next_Episode_WPF
 
         private readonly ShowService showService;
         private readonly ActivityService activityService;
-        private readonly UserService UserService;
+        private readonly UserService userService;
 
         private Show? CurrentShow { get; set; }
         public HomeWindow(EpisodeService epservice, PlayerService playservice, ShowService showservice, ActivityService activityservice, UserService userservice)
@@ -35,7 +33,7 @@ namespace Next_Episode_WPF
             this.playerService = playservice;
             this.showService = showservice;
             this.activityService = activityservice;
-            this.UserService = userservice;
+            this.userService = userservice;
             RefreshUI();
             FillRecentActivity();
 
@@ -45,34 +43,55 @@ namespace Next_Episode_WPF
   
         private void WatchNextButton_Click(object sender, RoutedEventArgs e)
         {
-            if (GetCurrentEpisode() is not Episode episode)
+            Episode? currep = GetCurrentEpisode();
+            if (currep == null)
             {
-                LogOutput.Text = "No episode available to play.";
+                LogOutput.Text = "No episode available to mark as watched.";
                 return;
             }
 
-            var startvideo = playerService.StartVideo(episode.FilePath);
+            userService.UpdateEpisodesWatched(1);
+            userService.IncreaseTimeWatched(currep.Duration);
+
+            var startvideo = playerService.StartVideo(currep.FilePath);
             if (HandleFailure(startvideo)) return;
 
             var logEpisode = episodeService.LogEpisodeWatched(CurrentShow!);
             if (HandleFailure(logEpisode)) return;
+            if (logEpisode.Data!.IsFinished)
+            {
+                userService.UpdateShowsWatched(1);
+            }
 
-            var logactivity = activityService.LogEpisodeWatched(episode.ShowName, episode.Season, episode.Number);
+            var logactivity = activityService.LogEpisodeWatched(currep.ShowName, currep.Season, currep.Number);
             if (HandleFailure(logactivity)) return;
+
             UpdateActivity(logactivity.Data!);
            
             UpdateNExtEpisodeInfo();
         }
         private void MarkWatchedButton_Click(object sender, RoutedEventArgs e)
         {
-            if (GetCurrentEpisode() is not Episode episode)
+            Episode? currep = GetCurrentEpisode();
+            if (currep == null)
             {
                 LogOutput.Text = "No episode available to mark as watched.";
                 return;
             }
 
+            userService.UpdateEpisodesWatched(1);
+            userService.IncreaseTimeWatched(currep.Duration);
+            
             var logEpisode = episodeService.LogEpisodeWatched(CurrentShow!);
             if (HandleFailure(logEpisode)) return;
+            if (logEpisode.Data!.IsFinished)
+            {
+                userService.UpdateShowsWatched(1);
+            }
+            var logactivity = activityService.LogEpisodeWatched(currep.ShowName, currep.Season, currep.Number);
+            if (HandleFailure(logactivity)) return;
+
+            UpdateActivity(logactivity.Data!);
             UpdateNExtEpisodeInfo();
         }
         private void ChangeEpisodeButton_Click(object sender, RoutedEventArgs e)
@@ -96,7 +115,7 @@ namespace Next_Episode_WPF
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
+       
         private void AddShowButton_Click(object sender, RoutedEventArgs e)
         {
             using var dialog = new FolderBrowserDialog();
@@ -149,7 +168,22 @@ namespace Next_Episode_WPF
         {
             LoadShowNames();
             LoadSelectedShow();
-            bool hasShow = CurrentShow != null;
+
+            bool hasShow = CurrentShow != null && !CurrentShow.IsFinished;
+
+            if (!hasShow)
+            {
+                WatchNextButton.Content = "Finished the show!";
+                MarkWatchedButton.Content = "Please select a new show.";
+                ChangeEpisodeButton.Content = "Or restart this show and watch again!";
+            }
+            else
+            {
+                // Reset buttons to default content when a valid show is selected
+                WatchNextButton.Content = "▶ Watch the next episode";
+                MarkWatchedButton.Content = "✔ Mark as watched";
+                ChangeEpisodeButton.Content = "Change current episode";
+            }
 
             WatchNextButton.IsEnabled = hasShow;
             MarkWatchedButton.IsEnabled = hasShow;
@@ -157,6 +191,7 @@ namespace Next_Episode_WPF
 
             UpdateNExtEpisodeInfo();
         }
+
         private void LoadSelectedShow()
         {
             var selectedName = ShowSelector.SelectedValue as string;
@@ -247,7 +282,22 @@ namespace Next_Episode_WPF
         {
             LoadSelectedShow();
 
-            bool hasShow = CurrentShow != null;
+            bool hasShow = CurrentShow != null && !CurrentShow.IsFinished;
+
+            if (!hasShow)
+            {
+                WatchNextButton.Content = "Finished the show!";
+                MarkWatchedButton.Content = "Please select a new show.";
+                ChangeEpisodeButton.Content = "Or restart this show and watch again!";
+            }
+            else
+            {
+                // Reset buttons to default content when a valid show is selected
+                WatchNextButton.Content = "▶ Watch the next episode";
+                MarkWatchedButton.Content = "✔ Mark as watched";
+                ChangeEpisodeButton.Content = "Change current episode";
+            }
+
             WatchNextButton.IsEnabled = hasShow;
             MarkWatchedButton.IsEnabled = hasShow;
             ChangeEpisodeButton.IsEnabled = hasShow;
@@ -293,7 +343,7 @@ namespace Next_Episode_WPF
 
         private void Statistics_Click(object sender, RoutedEventArgs e)
         {
-            var statsResponse = UserService.GetUserStats();
+            var statsResponse = userService.GetUserStats();
             if (HandleFailure(statsResponse)) return;
             
                 var statsWindow = new StatisticsWindow(statsResponse.Data!);

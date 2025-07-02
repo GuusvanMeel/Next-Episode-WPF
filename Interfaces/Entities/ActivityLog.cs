@@ -20,7 +20,7 @@
             ShowFinished,
             ResetProgress,
             AddedShow,
-            EditedShow,
+            EditedShow
         }
     }
 }

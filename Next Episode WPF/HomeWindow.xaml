@@ -1,25 +1,21 @@
 ﻿<Window x:Class="Next_Episode_WPF.HomeWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Next Episode" Height="500" Width="700"
+        Title="Next Episode" Height="640" Width="700"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
+
 
     <Grid Margin="15">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
-            <!-- Left column -->
             <ColumnDefinition Width="2*"/>
-            <!-- Right column -->
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <!-- Main content -->
             <RowDefinition Height="Auto"/>
-            <!-- Bottom buttons on left -->
             <RowDefinition Height="Auto"/>
-            <!-- Bottom buttons on right -->
         </Grid.RowDefinitions>
 
         <!-- Left side stack -->
@@ -43,7 +39,6 @@
                     Width="300"
                     Margin="0,10,0,10" Click="WatchNextButton_Click"/>
 
-            <!-- Match width of watch next -->
             <Button x:Name="MarkWatchedButton"
                     Content="✔ Mark as watched"
                     Width="300"
@@ -54,8 +49,8 @@
                     Width="300"
                     Margin="0,0,0,65" Click="ChangeEpisodeButton_Click"/>
 
-            <!-- Recent Activity Log stretch to bottom -->
-            <GroupBox Header="Recent Activity" Width="350" Margin="0,0,0,10" Height="190">
+            <!-- Recent Activity Log increased height -->
+            <GroupBox Header="Recent Activity" Width="350" Margin="0,0,0,10" Height="300">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,23">
                     <StackPanel x:Name="RecentActivityPanel" />
                 </ScrollViewer>
@@ -65,8 +60,11 @@
         <!-- Right side stack -->
         <StackPanel Grid.Column="1" Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Center" Width="250">
 
-            <Border Background="#DDD" Width="200" Height="200" Margin="0,0,0,10">
-                <Image x:Name="PosterImage" Stretch="UniformToFill"/>
+            <!-- Adjusted poster container to maintain ~2:3 aspect ratio -->
+            <Border Background="#DDD" Width="200" Height="300" Margin="0,0,0,10">
+                <Image x:Name="PosterImage"
+                   Stretch="UniformToFill"
+                   RenderOptions.BitmapScalingMode="HighQuality"/>  
             </Border>
 
             <StackPanel>
@@ -92,8 +90,6 @@
             </StackPanel>
 
         </StackPanel>
-
-
 
     </Grid>
 
