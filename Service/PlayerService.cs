@@ -37,7 +37,7 @@ namespace Service
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = playerPath,
-                        Arguments = $"--fullscreen \"{videofilepath}\"",
+                        Arguments = $"--fullscreen --sub-track=1 \"{videofilepath}\"",
                         UseShellExecute = false,
                         CreateNoWindow = true,
                     }

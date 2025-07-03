@@ -232,5 +232,33 @@ namespace Service
             var names =  ShowRepo.GetShowNamesInApp();
             return ResponseBody<List<string>>.Ok(names);
         }
+        public ResponseBody<Show> ResetShowProgress(Show show)
+        {
+            try
+            {
+                show.IsFinished = false;
+                foreach(Season Season in show.Seasons)
+                {
+                    foreach(Episode ep in Season.Episodes)
+                    {
+                        ep.WhenWatched = null;
+                    }
+                }
+                    var firstEpisode = show.Seasons
+                   .SelectMany(s => s.Episodes)
+                   .OrderBy(e => e.Season)
+                   .ThenBy(e => e.Number)
+                   .FirstOrDefault();
+
+                show.CurrentEpisodePath = firstEpisode?.FilePath;
+                ShowRepo.SaveShow(show);
+                logger.LogInfo($"Reset progress for show '{show.Name}'.");
+                return ResponseBody<Show>.Ok(show);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionHelper.FailWithLog<Show>(logger, nameof(ResetShowProgress), ex, "Unexpected error");
+            }
+        }
     }
 }

@@ -61,14 +61,15 @@ namespace Next_Episode_WPF
             if (logEpisode.Data!.IsFinished)
             {
                 userService.UpdateShowsWatched(1);
+                CurrentShow = logEpisode.Data;
             }
 
             var logactivity = activityService.LogEpisodeWatched(currep.ShowName, currep.Season, currep.Number);
             if (HandleFailure(logactivity)) return;
 
             UpdateActivity(logactivity.Data!);
-           
-            UpdateNExtEpisodeInfo();
+
+            RefreshUI();
         }
         private void MarkWatchedButton_Click(object sender, RoutedEventArgs e)
         {
@@ -87,12 +88,13 @@ namespace Next_Episode_WPF
             if (logEpisode.Data!.IsFinished)
             {
                 userService.UpdateShowsWatched(1);
+                CurrentShow = logEpisode.Data;
             }
             var logactivity = activityService.LogEpisodeWatched(currep.ShowName, currep.Season, currep.Number);
             if (HandleFailure(logactivity)) return;
 
             UpdateActivity(logactivity.Data!);
-            UpdateNExtEpisodeInfo();
+            RefreshUI();
         }
         private void ChangeEpisodeButton_Click(object sender, RoutedEventArgs e)
         {
@@ -164,18 +166,27 @@ namespace Next_Episode_WPF
                 }
             }
         }
+        private void RestartShowButton_Click(object sender, RoutedEventArgs e)
+        {   if (CurrentShow == null) return;
+            var result = showService.ResetShowProgress(CurrentShow);
+            if (HandleFailure(result)) return;
+
+            RefreshUI();
+        }
         private void RefreshUI()
         {
             LoadShowNames();
             LoadSelectedShow();
 
             bool hasShow = CurrentShow != null && !CurrentShow.IsFinished;
-
+            ChangeEpisodeButton.Click -= ChangeEpisodeButton_Click;
+            ChangeEpisodeButton.Click -= RestartShowButton_Click;
             if (!hasShow)
             {
                 WatchNextButton.Content = "Finished the show!";
                 MarkWatchedButton.Content = "Please select a new show.";
                 ChangeEpisodeButton.Content = "Or restart this show and watch again!";
+                ChangeEpisodeButton.Click += RestartShowButton_Click;
             }
             else
             {
@@ -183,11 +194,12 @@ namespace Next_Episode_WPF
                 WatchNextButton.Content = "▶ Watch the next episode";
                 MarkWatchedButton.Content = "✔ Mark as watched";
                 ChangeEpisodeButton.Content = "Change current episode";
+                ChangeEpisodeButton.Click += ChangeEpisodeButton_Click;
             }
 
             WatchNextButton.IsEnabled = hasShow;
             MarkWatchedButton.IsEnabled = hasShow;
-            ChangeEpisodeButton.IsEnabled = hasShow;
+            //ChangeEpisodeButton.IsEnabled = hasShow;
 
             UpdateNExtEpisodeInfo();
         }
@@ -256,24 +268,7 @@ namespace Next_Episode_WPF
             NextEpisodeInfo.Text = UIFormatter.FormatNextEpisodeInfo(nextEpisode);
 
         }
-        private bool HandleFailure<T>(ResponseBody<T> response)
-        {
-            if (!response.Success || response.Data == null)
-            {
-                LogOutput.Text = response.Message ?? "An unknown error occurred.";
-                return true;
-            }
-            return false;
-        }
-        private bool HandleFailure(ResponseBody response)
-        {
-            if (!response.Success)
-            {
-                LogOutput.Text = response.Message ?? "An unknown error occurred.";
-                return true;
-            }
-            return false;
-        }
+      
         private void ShowSelector_ValueChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateCurrentShowUI();
@@ -283,12 +278,14 @@ namespace Next_Episode_WPF
             LoadSelectedShow();
 
             bool hasShow = CurrentShow != null && !CurrentShow.IsFinished;
-
+            ChangeEpisodeButton.Click -= ChangeEpisodeButton_Click;
+            ChangeEpisodeButton.Click -= RestartShowButton_Click;
             if (!hasShow)
             {
                 WatchNextButton.Content = "Finished the show!";
                 MarkWatchedButton.Content = "Please select a new show.";
                 ChangeEpisodeButton.Content = "Or restart this show and watch again!";
+                ChangeEpisodeButton.Click += RestartShowButton_Click;
             }
             else
             {
@@ -296,11 +293,12 @@ namespace Next_Episode_WPF
                 WatchNextButton.Content = "▶ Watch the next episode";
                 MarkWatchedButton.Content = "✔ Mark as watched";
                 ChangeEpisodeButton.Content = "Change current episode";
+                ChangeEpisodeButton.Click += ChangeEpisodeButton_Click;                
             }
 
             WatchNextButton.IsEnabled = hasShow;
             MarkWatchedButton.IsEnabled = hasShow;
-            ChangeEpisodeButton.IsEnabled = hasShow;
+            //ChangeEpisodeButton.IsEnabled = hasShow;
 
             UpdateNExtEpisodeInfo();
         }
@@ -349,6 +347,24 @@ namespace Next_Episode_WPF
                 var statsWindow = new StatisticsWindow(statsResponse.Data!);
                 statsWindow.ShowDialog();
             
+        }
+        private bool HandleFailure<T>(ResponseBody<T> response)
+        {
+            if (!response.Success || response.Data == null)
+            {
+                LogOutput.Text = response.Message ?? "An unknown error occurred.";
+                return true;
+            }
+            return false;
+        }
+        private bool HandleFailure(ResponseBody response)
+        {
+            if (!response.Success)
+            {
+                LogOutput.Text = response.Message ?? "An unknown error occurred.";
+                return true;
+            }
+            return false;
         }
     }
 }

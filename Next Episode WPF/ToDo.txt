@@ -11,24 +11,19 @@ MUST HAVE
 - Detect and recover corrupted JSON files.
 - Confirm + delete show metadata (and optionally episode files).
 - go back episode, when you want to go back same as skip but reverse.
-- ge actual episode name. 
+- get actual episode name. 
 - movies aswell.
 - mvoies make a list, so those movies play after each other.
 - voor film lijst randomizer.
 - auto delete when complete. option in settings and safeguard.
 - favourite episodes / movies. 
-
+-ask user what subtitle they want to use, for the index since i cant do language = eng.
 
 [UI | Must]
 - Responsive layouts: prevent content cutoffs in small screens.
-- EpisodeNumberPicker with:
-    - Example filename display.
-    - Regex scheme options.
-    - Custom regex input.
-    - Regex preview feedback.
 
 [UX | Must]
-- End-of-show handling: notify when show is finished and offer actions. 
+- End-of-show handling: notify when show is finished and offer actions. //ALMOST DONE, just need to add the option what to do after. 
 
 [Backend | Must]
 - Logging (info + error) across services. 
