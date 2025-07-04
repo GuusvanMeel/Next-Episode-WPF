@@ -22,7 +22,7 @@ namespace Service
                 };
 
                 var result = ActivityRepo.Log(log);
-                return ResponseHelper.Check(result);
+                return result;
             }
             catch (Exception ex)
             {
@@ -64,7 +64,7 @@ namespace Service
                 };
 
                 var result = ActivityRepo.Log(log);
-                return ResponseHelper.Check(result);
+                return result;
             }
             catch (Exception ex)
             {
@@ -83,7 +83,7 @@ namespace Service
                 };
 
                 var result = ActivityRepo.Log(log);
-                return ResponseHelper.Check(result);
+                return result;
             }
             catch (Exception ex)
             {
@@ -120,12 +120,12 @@ namespace Service
         public ResponseBody<List<ActivityLog>> GetActivity()
         {
             var activities = ActivityRepo.GetAll();
-            return ResponseHelper.Check(activities);
+            return activities;
         }
         public ResponseBody<ActivityLog> GetMostRecent()
         {
             var activity = ActivityRepo.GetLast();
-            return ResponseHelper.Check(activity);
+            return activity;
         }
 
 

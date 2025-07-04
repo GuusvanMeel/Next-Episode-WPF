@@ -1,6 +1,7 @@
 ﻿using Interfaces.Entities;
 using Service;
 using Service.Helper;
+using Service.Orchestrator;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Next_Episode_WPF
 {
@@ -24,9 +26,10 @@ namespace Next_Episode_WPF
         private readonly ShowService showService;
         private readonly ActivityService activityService;
         private readonly UserService userService;
+        private readonly PlaybackOrchestration playbackOrchestration;
 
         private Show? CurrentShow { get; set; }
-        public HomeWindow(EpisodeService epservice, PlayerService playservice, ShowService showservice, ActivityService activityservice, UserService userservice)
+        public HomeWindow(EpisodeService epservice, PlayerService playservice, ShowService showservice, ActivityService activityservice, UserService userservice, PlaybackOrchestration playbackorchestration)
         {
             InitializeComponent();
             this.episodeService = epservice;
@@ -34,6 +37,7 @@ namespace Next_Episode_WPF
             this.showService = showservice;
             this.activityService = activityservice;
             this.userService = userservice;
+            this.playbackOrchestration = playbackorchestration;
             RefreshUI();
             FillRecentActivity();
 
@@ -43,68 +47,27 @@ namespace Next_Episode_WPF
   
         private void WatchNextButton_Click(object sender, RoutedEventArgs e)
         {
-            Episode? currep = GetCurrentEpisode();
-            if (currep == null)
-            {
-                LogOutput.Text = "No episode available to mark as watched.";
-                return;
-            }
-
-            userService.UpdateEpisodesWatched(1);
-            userService.IncreaseTimeWatched(currep.Duration);
-
-            var startvideo = playerService.StartVideo(currep.FilePath);
-            if (HandleFailure(startvideo)) return;
-
-            var logEpisode = episodeService.LogEpisodeWatched(CurrentShow!);
-            if (HandleFailure(logEpisode)) return;
-            if (logEpisode.Data!.IsFinished)
-            {
-                userService.UpdateShowsWatched(1);
-                CurrentShow = logEpisode.Data;
-            }
-
-            var logactivity = activityService.LogEpisodeWatched(currep.ShowName, currep.Season, currep.Number);
-            if (HandleFailure(logactivity)) return;
-
-            UpdateActivity(logactivity.Data!);
-
-            RefreshUI();
+            var result = playbackOrchestration.WatchNextEpisode(CurrentShow!, true);
+            ProcessWatchResult(result);
         }
         private void MarkWatchedButton_Click(object sender, RoutedEventArgs e)
         {
-            Episode? currep = GetCurrentEpisode();
-            if (currep == null)
-            {
-                LogOutput.Text = "No episode available to mark as watched.";
-                return;
-            }
+            var result = playbackOrchestration.WatchNextEpisode(CurrentShow!, false);
+            ProcessWatchResult(result);
+        }
+        private void ProcessWatchResult(ResponseBody<WatchResult> result)
+        {
+            if (HandleFailure(result)) return;
 
-            userService.UpdateEpisodesWatched(1);
-            userService.IncreaseTimeWatched(currep.Duration);
-            
-            var logEpisode = episodeService.LogEpisodeWatched(CurrentShow!);
-            if (HandleFailure(logEpisode)) return;
-            if (logEpisode.Data!.IsFinished)
-            {
-                userService.UpdateShowsWatched(1);
-                CurrentShow = logEpisode.Data;
-            }
-            var logactivity = activityService.LogEpisodeWatched(currep.ShowName, currep.Season, currep.Number);
-            if (HandleFailure(logactivity)) return;
-
-            UpdateActivity(logactivity.Data!);
-            RefreshUI();
+            CurrentShow = result.Data!.UpdatedShow;
+            UpdateActivity(result.Data.ActivityLog);
+            UpdateButtonsUI();
+            UpdateNExtEpisodeInfo();
         }
         private void ChangeEpisodeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentShow is null)
-            {
-                LogOutput.Text = "No show is currently selected.";
-                return;
-            }
 
-            var picker = new ChangeEpisodeWindow(CurrentShow);
+            var picker = new ChangeEpisodeWindow(CurrentShow!);
             bool? pickerResult = picker.ShowDialog();
 
             if (pickerResult == true && picker.selectedEpisode != null)
@@ -112,7 +75,7 @@ namespace Next_Episode_WPF
                 var result = episodeService.SetCurrentEpisode(picker.selectedEpisode);
                 if (HandleFailure(result)) return;
 
-                LoadSelectedShow();
+                CurrentShow = result.Data;
                 UpdateNExtEpisodeInfo();
             }
         }
@@ -177,10 +140,16 @@ namespace Next_Episode_WPF
         {
             LoadShowNames();
             LoadSelectedShow();
-
+            UpdateButtonsUI();
+            UpdateNExtEpisodeInfo();
+        }
+        private void UpdateButtonsUI()
+        {
             bool hasShow = CurrentShow != null && !CurrentShow.IsFinished;
+
             ChangeEpisodeButton.Click -= ChangeEpisodeButton_Click;
             ChangeEpisodeButton.Click -= RestartShowButton_Click;
+
             if (!hasShow)
             {
                 WatchNextButton.Content = "Finished the show!";
@@ -190,7 +159,6 @@ namespace Next_Episode_WPF
             }
             else
             {
-                // Reset buttons to default content when a valid show is selected
                 WatchNextButton.Content = "▶ Watch the next episode";
                 MarkWatchedButton.Content = "✔ Mark as watched";
                 ChangeEpisodeButton.Content = "Change current episode";
@@ -199,9 +167,6 @@ namespace Next_Episode_WPF
 
             WatchNextButton.IsEnabled = hasShow;
             MarkWatchedButton.IsEnabled = hasShow;
-            //ChangeEpisodeButton.IsEnabled = hasShow;
-
-            UpdateNExtEpisodeInfo();
         }
 
         private void LoadSelectedShow()
@@ -241,14 +206,7 @@ namespace Next_Episode_WPF
             ShowSelector.ItemsSource = names.Data;
             ShowSelector.SelectedIndex = 0;
         }
-        private Episode? GetCurrentEpisode()
-        {
-            if (CurrentShow == null) return null;
-            
-            return CurrentShow.Seasons
-                .SelectMany(s => s.Episodes)
-                .FirstOrDefault(e => e.FilePath == CurrentShow.CurrentEpisodePath);
-        }
+      
         private void UpdateNExtEpisodeInfo()
         {
             if (CurrentShow == null)
@@ -256,52 +214,37 @@ namespace Next_Episode_WPF
                 NextEpisodeInfo.Text = "No show selected.";
                 return;
             }
-            var nextEpisode = GetCurrentEpisode();
+            var nextEpisode = episodeService.GetCurrentEpisode(CurrentShow);
 
-            if (nextEpisode == null)
+            if (nextEpisode.Data == null)
             {
                 NextEpisodeInfo.Text = "You’ve finished this show!";
                 return;
             }
 
-
-            NextEpisodeInfo.Text = UIFormatter.FormatNextEpisodeInfo(nextEpisode);
+            NextEpisodeInfo.Text = UIFormatter.FormatNextEpisodeInfo(nextEpisode.Data);
+            var progress = episodeService.GetWatchProgress(CurrentShow);
+            if (progress.Success)
+            {
+                WatchPercentageLabel.Text = $"Watch Progress: {progress.Data:0.##}%";
+                var rounded = TimeSpan.FromSeconds(Math.Ceiling(CurrentShow.TimeWatched.TotalSeconds));
+                WatchTimeLabel.Text = $"Time Watched: {rounded.Hours}h {rounded.Minutes}m {rounded.Seconds}s";
+            }
+            else
+            {
+                WatchPercentageLabel.Text = "Watch Progress: N/A";
+                WatchTimeLabel.Text = $"Time Watched: N/A";
+            }
 
         }
       
         private void ShowSelector_ValueChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateCurrentShowUI();
-        }
-        private void UpdateCurrentShowUI()
-        {
             LoadSelectedShow();
-
-            bool hasShow = CurrentShow != null && !CurrentShow.IsFinished;
-            ChangeEpisodeButton.Click -= ChangeEpisodeButton_Click;
-            ChangeEpisodeButton.Click -= RestartShowButton_Click;
-            if (!hasShow)
-            {
-                WatchNextButton.Content = "Finished the show!";
-                MarkWatchedButton.Content = "Please select a new show.";
-                ChangeEpisodeButton.Content = "Or restart this show and watch again!";
-                ChangeEpisodeButton.Click += RestartShowButton_Click;
-            }
-            else
-            {
-                // Reset buttons to default content when a valid show is selected
-                WatchNextButton.Content = "▶ Watch the next episode";
-                MarkWatchedButton.Content = "✔ Mark as watched";
-                ChangeEpisodeButton.Content = "Change current episode";
-                ChangeEpisodeButton.Click += ChangeEpisodeButton_Click;                
-            }
-
-            WatchNextButton.IsEnabled = hasShow;
-            MarkWatchedButton.IsEnabled = hasShow;
-            //ChangeEpisodeButton.IsEnabled = hasShow;
-
+            UpdateButtonsUI();
             UpdateNExtEpisodeInfo();
         }
+        
         private void FillRecentActivity()
         {
             var activities = activityService.GetActivity();
@@ -351,15 +294,6 @@ namespace Next_Episode_WPF
         private bool HandleFailure<T>(ResponseBody<T> response)
         {
             if (!response.Success || response.Data == null)
-            {
-                LogOutput.Text = response.Message ?? "An unknown error occurred.";
-                return true;
-            }
-            return false;
-        }
-        private bool HandleFailure(ResponseBody response)
-        {
-            if (!response.Success)
             {
                 LogOutput.Text = response.Message ?? "An unknown error occurred.";
                 return true;

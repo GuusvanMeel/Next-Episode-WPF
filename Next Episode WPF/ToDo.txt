@@ -18,6 +18,7 @@ MUST HAVE
 - auto delete when complete. option in settings and safeguard.
 - favourite episodes / movies. 
 -ask user what subtitle they want to use, for the index since i cant do language = eng.
+- skip ahead, make every eepisode below the ep you are at watched.
 
 [UI | Must]
 - Responsive layouts: prevent content cutoffs in small screens.

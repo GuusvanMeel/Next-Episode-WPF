@@ -9,21 +9,21 @@ namespace Service.Helper
 {
     static class ResponseHelper
     {
-        public static ResponseBody Check(ResponseBody result)
+        public static bool Check(ResponseBody result)
         {
             if (result.Success == false)
             {
-                return ResponseBody.Fail(result.Message ?? "Unknown error");
+                return false;
             }
-            return ResponseBody.Ok();
+            return true;
         }
-        public static ResponseBody<T> Check<T>(ResponseBody<T> result)
+        public static bool Check<T>(ResponseBody<T> result)
         {
-            if (result.Success == false)
+            if (result.Success == false || result.Data == null)
             {
-                return ResponseBody<T>.Fail(result.Message ?? "Unknown error");
+                return false;
             }
-            return ResponseBody<T>.Ok(result.Data!);
+            return true;
         }
     }
 }

@@ -51,11 +51,40 @@ namespace Service
                 Show? show = ShowRepo.GetShow(episode.ShowName);
                 if (show == null)
                 {
-                    return ResponseBody<Show>.Fail("could not find show");
+                    return ResponseBody<Show>.Fail("Could not find show.");
                 }
+
+                // Sort all episodes in proper order
+                var allEpisodes = show.Seasons
+                    .SelectMany(s => s.Episodes)
+                    .OrderBy(e => e.Season)
+                    .ThenBy(e => e.Number)
+                    .ToList();
+
+                foreach (var ep in allEpisodes)
+                {
+                    if (string.Equals(ep.FilePath, episode.FilePath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Found current episode
+                        ep.WhenWatched = null;
+                    }
+                    else if (ep.Season < episode.Season || (ep.Season == episode.Season && ep.Number < episode.Number))
+                    {
+                        // Episodes before current are marked as watched
+                        ep.WhenWatched ??= DateTime.Now;
+                    }
+                    else
+                    {
+                        // Episodes after current are unwatched
+                        ep.WhenWatched = null;
+                    }
+                }
+
                 show.CurrentEpisodePath = episode.FilePath;
                 logger.LogInfo($"SetCurrentEpisode: '{episode.FilePath}' set as current for show '{episode.ShowName}'.");
+
                 ShowRepo.SaveShow(show);
+
                 return ResponseBody<Show>.Ok(show);
             }
             catch (Exception ex)
@@ -64,11 +93,11 @@ namespace Service
             }
         }
 
+
         public ResponseBody<Episode> GetCurrentEpisode(Show show)
         {
             try
             {
-
                 Episode? current = FindCurrentEpisode(show);
                 if (current == null)
                 {
@@ -88,8 +117,10 @@ namespace Service
             try
             {
                 var currentResult = GetCurrentEpisode(show);
-                var check = ResponseHelper.Check(currentResult);
-                if (!check.Success) return check;
+                if (!ResponseHelper.Check(currentResult))
+                {
+                    return ResponseBody<Episode>.Fail(currentResult.Message!);
+                }
 
                 Episode? next = GetNextEpisode(show, currentResult.Data!);
                 if (next == null)
@@ -163,7 +194,7 @@ namespace Service
             }
         }
 
-        private static Episode? FindCurrentEpisode(Show show)
+        public Episode? FindCurrentEpisode(Show show)
         {
             return GetAllEpisodes(show)
                 .FirstOrDefault(e => e.FilePath == show.CurrentEpisodePath);

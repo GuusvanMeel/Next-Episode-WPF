@@ -3,6 +3,7 @@ using Interfaces.Entities;
 using Interfaces.interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Service;
+using Service.Orchestrator;
 using System;
 using System.IO;
 using System.Windows;
@@ -37,6 +38,7 @@ namespace Next_Episode_WPF // 👈 This must match App.xaml
             services.AddSingleton<IShowRepo, ShowJSONRepo>();
             services.AddSingleton<IActivityLogRepo, ActivityLogJSONRepo>();
             services.AddSingleton<IUserStatsRepo, UserStatsJSONRepo>();
+            services.AddSingleton<PlaybackOrchestration>();
             services.AddSingleton<ShowService>();
             services.AddSingleton<PlayerService>();
             services.AddSingleton<EpisodeService>();
