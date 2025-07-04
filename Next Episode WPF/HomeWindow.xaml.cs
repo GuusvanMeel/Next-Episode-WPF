@@ -145,29 +145,46 @@ namespace Next_Episode_WPF
         }
         private void UpdateButtonsUI()
         {
-            bool hasShow = CurrentShow != null && !CurrentShow.IsFinished;
+            bool hasShow = CurrentShow != null;
+            bool isFinished = CurrentShow?.IsFinished == true;
 
             ChangeEpisodeButton.Click -= ChangeEpisodeButton_Click;
             ChangeEpisodeButton.Click -= RestartShowButton_Click;
 
             if (!hasShow)
             {
+                WatchNextButton.Content = "No show selected.";
+                MarkWatchedButton.Content = "Please select a show.";
+                ChangeEpisodeButton.Content = "Add a show first!";
+                // Disable all actions if no show
+                WatchNextButton.IsEnabled = false;
+                MarkWatchedButton.IsEnabled = false;
+                ChangeEpisodeButton.IsEnabled = false;
+            }
+            else if (isFinished)
+            {
                 WatchNextButton.Content = "Finished the show!";
                 MarkWatchedButton.Content = "Please select a new show.";
                 ChangeEpisodeButton.Content = "Or restart this show and watch again!";
                 ChangeEpisodeButton.Click += RestartShowButton_Click;
+
+                WatchNextButton.IsEnabled = false;
+                MarkWatchedButton.IsEnabled = false;
+                ChangeEpisodeButton.IsEnabled = true;
             }
-            else
+            else // Show is selected and not finished
             {
                 WatchNextButton.Content = "▶ Watch the next episode";
                 MarkWatchedButton.Content = "✔ Mark as watched";
                 ChangeEpisodeButton.Content = "Change current episode";
                 ChangeEpisodeButton.Click += ChangeEpisodeButton_Click;
-            }
 
-            WatchNextButton.IsEnabled = hasShow;
-            MarkWatchedButton.IsEnabled = hasShow;
+                WatchNextButton.IsEnabled = true;
+                MarkWatchedButton.IsEnabled = true;
+                ChangeEpisodeButton.IsEnabled = true;
+            }
         }
+
 
         private void LoadSelectedShow()
         {

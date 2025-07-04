@@ -26,5 +26,10 @@
 		<ProjectReference Include="..\Interfaces\Interfaces.csproj" />
 		<ProjectReference Include="..\Service\Service.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+		<None Update="data\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>
