@@ -240,6 +240,7 @@ namespace Next_Episode_WPF
             }
 
             NextEpisodeInfo.Text = UIFormatter.FormatNextEpisodeInfo(nextEpisode.Data);
+            NextEpisodeTitle.Text = nextEpisode.Data.Title;
             var progress = episodeService.GetWatchProgress(CurrentShow);
             if (progress.Success)
             {
