@@ -104,5 +104,14 @@ namespace Service
                 return ExceptionHelper.FailWithLog<UserStats>(logger, nameof(GetUserStats), ex, "failed to Get user stats");
             }
         }
+        public ResponseBody ResetUserStats()
+        {
+            bool result = StatsRepo.ResetStats();
+            if (result)
+            {
+               return ResponseBody.Ok();
+            }
+            return ResponseBody.Fail("Failed to reset the stats of the user");
+        }
     }
 }

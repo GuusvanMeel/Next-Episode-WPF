@@ -1,4 +1,5 @@
-﻿using Interfaces.Entities;
+﻿using DAL;
+using Interfaces.Entities;
 using Service;
 using Service.Helper;
 using Service.Orchestrator;
@@ -11,6 +12,7 @@ using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
@@ -98,7 +100,11 @@ namespace Next_Episode_WPF
             string sampleFile = result.Data!;
 
             // Open your episode number picker window, passing the sampleFile for display
-            var picker = new EpisodeNumberPickerWindow(sampleFile);
+            var picker = new EpisodeNumberPickerWindow(sampleFile)
+            {
+                Owner = this, // sets HomeWindow as the owner
+                WindowStartupLocation = WindowStartupLocation.CenterOwner // centers over owner
+            };
             bool? pickerResult = picker.ShowDialog();
 
             if (pickerResult == true)
@@ -108,7 +114,11 @@ namespace Next_Episode_WPF
                 var names = showService.GetAllShowNamesFromApp();
                 if (HandleFailure(names)) return;
 
-                var namepicker = new ShowNamePickerWindow(names.Data!);
+                var namepicker = new ShowNamePickerWindow(names.Data!)
+                {
+                    Owner = this, // sets HomeWindow as the owner
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner // centers over owner
+                };
                 bool? showpickerresult = namepicker.ShowDialog(); 
 
                 if (showpickerresult == true)
@@ -245,6 +255,10 @@ namespace Next_Episode_WPF
             if (progress.Success)
             {
                 WatchPercentageLabel.Text = $"Watch Progress: {progress.Data:0.##}%";
+                WatchProgressBar.Value = progress.Data;
+                byte red = (byte)(255 - (progress.Data / 100.0 * 255));
+                byte green = (byte)(progress.Data / 100.0 * 255);
+                WatchProgressBar.Foreground = new SolidColorBrush(Color.FromRgb(red, green, 0));
                 var rounded = TimeSpan.FromSeconds(Math.Ceiling(CurrentShow.TimeWatched.TotalSeconds));
                 WatchTimeLabel.Text = $"Time Watched: {rounded.Hours}h {rounded.Minutes}m {rounded.Seconds}s";
             }
@@ -304,12 +318,16 @@ namespace Next_Episode_WPF
         {
             var statsResponse = userService.GetUserStats();
             if (HandleFailure(statsResponse)) return;
-            
-                var statsWindow = new StatisticsWindow(statsResponse.Data!);
+
+            var statsWindow = new StatisticsWindow(statsResponse.Data!)
+            {
+                Owner = this, // sets HomeWindow as the owner
+                WindowStartupLocation = WindowStartupLocation.CenterOwner // centers over owner
+            };
                 statsWindow.ShowDialog();
             
         }
-        private bool HandleFailure<T>(ResponseBody<T> response)
+        public bool HandleFailure<T>(ResponseBody<T> response)
         {
             if (!response.Success || response.Data == null)
             {
@@ -318,5 +336,16 @@ namespace Next_Episode_WPF
             }
             return false;
         }
+
+        private void OpenSettings_Click(object sender, RoutedEventArgs e)
+        {
+            var settingsWindow = new SettingsWindow(new(new SettingsJSONRepo(new FileLogger()),new FileLogger()), new(new FileLogger(), new UserStatsJSONRepo(new FileLogger())))
+            {
+                Owner = this, // sets HomeWindow as the owner
+                WindowStartupLocation = WindowStartupLocation.CenterOwner // centers over owner
+            };
+            settingsWindow.ShowDialog();
+        }
+
     }
 }

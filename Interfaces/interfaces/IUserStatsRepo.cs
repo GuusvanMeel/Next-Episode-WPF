@@ -17,5 +17,6 @@ namespace Interfaces.interfaces
         List<Episode> GetFavourites();
         UserStats GetStats();
         bool SaveStats(UserStats stats);
+        bool ResetStats();
     }
 }

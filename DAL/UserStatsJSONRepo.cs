@@ -183,5 +183,20 @@ namespace DAL
                 return false;
             }
         }
+
+        public bool ResetStats()
+        {
+            try
+            {
+                var newStats = new UserStats(); // create default empty stats
+                return SaveStats(newStats);
+            }
+            catch (Exception ex)
+            {
+                logger.LogException("ResetStats", ex);
+                return false;
+            }
+        }
+
     }
 }

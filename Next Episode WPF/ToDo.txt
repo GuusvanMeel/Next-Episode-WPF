@@ -18,7 +18,6 @@ MUST HAVE
 - auto delete when complete. option in settings and safeguard.
 - favourite episodes / movies. 
 -ask user what subtitle they want to use, for the index since i cant do language = eng.
-- skip ahead, make every eepisode below the ep you are at watched.
 
 [UI | Must]
 - Responsive layouts: prevent content cutoffs in small screens.
@@ -35,7 +34,6 @@ SHOULD HAVE
 -------------------------------------
 
 [UI | Should]
-- Poster image area (blank placeholder for now).
 - Watch progress bar (based on episodes watched).
 - Cleaner default styles (padding, font sizes, margins).
 - Settings window for app preferences.
