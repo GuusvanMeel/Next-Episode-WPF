@@ -1,5 +1,6 @@
 ﻿using DAL;
 using Interfaces.Entities;
+using Microsoft.Extensions.DependencyInjection;
 using Service;
 using Service.Helper;
 using Service.Orchestrator;
@@ -14,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Microsoft.Extensions.DependencyInjection;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Next_Episode_WPF
@@ -42,6 +44,7 @@ namespace Next_Episode_WPF
             this.playbackOrchestration = playbackorchestration;
             RefreshUI();
             FillRecentActivity();
+            
 
         }
 
@@ -339,12 +342,11 @@ namespace Next_Episode_WPF
 
         private void OpenSettings_Click(object sender, RoutedEventArgs e)
         {
-            var settingsWindow = new SettingsWindow(new(new SettingsJSONRepo(new FileLogger()),new FileLogger()), new(new FileLogger(), new UserStatsJSONRepo(new FileLogger())))
-            {
-                Owner = this, // sets HomeWindow as the owner
-                WindowStartupLocation = WindowStartupLocation.CenterOwner // centers over owner
-            };
+            var settingsWindow = App.ServiceProvider.GetRequiredService<SettingsWindow>();
+            settingsWindow.Owner = this; // or 'this' if inside HomeWindow method
+            settingsWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             settingsWindow.ShowDialog();
+
         }
 
     }

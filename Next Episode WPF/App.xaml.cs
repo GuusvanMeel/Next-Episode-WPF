@@ -33,10 +33,12 @@ namespace Next_Episode_WPF // 👈 This must match App.xaml
         private void ConfigureServices(IServiceCollection services)
         {
             // Register your services and repos here
-            services.AddSingleton<ILoggerService, FileLogger>();
-            services.AddSingleton<ISettingsRepo, SettingsJSONRepo>();
             services.AddSingleton<SettingsService>();
+            services.AddSingleton<SettingsWindow>();
             services.AddTransient<SettingsWindow>();
+            services.AddSingleton<SettingsService>(); // if not already
+            services.AddSingleton<ISettingsRepo, SettingsJSONRepo>();
+            services.AddSingleton<ILoggerService, FileLogger>();
             services.AddSingleton<IShowRepo, ShowJSONRepo>();
             services.AddSingleton<IActivityLogRepo, ActivityLogJSONRepo>();
             services.AddSingleton<IUserStatsRepo, UserStatsJSONRepo>();

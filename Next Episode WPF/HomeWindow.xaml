@@ -3,118 +3,165 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Next Episode" Height="640" Width="700"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Background="#FFF1F4">
+    <!-- blush pink background -->
 
+    <Window.Resources>
+        <!-- Global style for buttons -->
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#FFD6C9"/>
+            <!-- pastel peach -->
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+    </Window.Resources>
 
+    <!-- Top level grid to overlay flower and main content -->
     <Grid Margin="15">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="2*"/>
-        </Grid.ColumnDefinitions>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <!-- Flower image in bottom left -->
+        <Image Source="pack://application:,,,/data/background%20images/Flower.png"
+       HorizontalAlignment="Left"
+       VerticalAlignment="Top"
+       Width="220" Height="220"
+       Opacity="0.6"
+       Margin="0,160,0,0"/>
+        <!-- moved 40 pixels lower -->
 
-        <!-- Left side stack -->
-        <StackPanel Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+        <!-- Main content grid on top -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Show Selector -->
-            <ComboBox x:Name="ShowSelector"
-                      Width="300"
-                      Margin="0,0,0,10"
-                      SelectionChanged="ShowSelector_ValueChanged">
-            </ComboBox>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-            <!-- Indented Next episode texts -->
-            <StackPanel Margin="20,0,0,10" Width="230">
-                <TextBlock Text="The next episode" FontWeight="Bold" FontSize="14" Margin="0,0,0,4"/>
-                <TextBlock x:Name="NextEpisodeInfo" Text="Episode details here" FontSize="12" />
-                <TextBlock x:Name="NextEpisodeTitle"
-           Text="Episode title here"
-           FontSize="12"
-           FontStyle="Italic"
-           Margin="0,4,0,0"
-           TextWrapping="Wrap"
-           Height="40"
-           TextTrimming="CharacterEllipsis"/>
+            <!-- Left side stack -->
+            <StackPanel Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+
+                <!-- Show Selector -->
+                <ComboBox x:Name="ShowSelector"
+                          Width="300"
+                          Margin="0,0,0,10"
+                          SelectionChanged="ShowSelector_ValueChanged"
+                          Background="#FFEAE3" 
+                          Foreground="Black"/>
+
+                <!-- Indented Next episode texts -->
+                <StackPanel Margin="20,0,0,10" Width="230">
+                    <TextBlock Text="The next episode" FontWeight="Bold" FontSize="14" Margin="0,0,0,4" Foreground="Black"/>
+                    <TextBlock x:Name="NextEpisodeInfo" Text="Episode details here" FontSize="12" Foreground="Black"/>
+                    <TextBlock x:Name="NextEpisodeTitle"
+                               Text="Episode title here"
+                               FontSize="12"
+                               FontStyle="Italic"
+                               Margin="0,4,0,0"
+                               TextWrapping="Wrap"
+                               Height="40"
+                               TextTrimming="CharacterEllipsis"
+                               Foreground="Black"/>
+                </StackPanel>
+
+                <Button x:Name="WatchNextButton"
+                        Content="▶ Watch the next episode"
+                        Width="300"
+                        Margin="0,10,0,10"
+                        Click="WatchNextButton_Click"/>
+
+                <Button x:Name="MarkWatchedButton"
+                        Content="✔ Mark as watched"
+                        Width="300"
+                        Margin="0,0,0,10"
+                        Click="MarkWatchedButton_Click"/>
+
+                <Button x:Name="ChangeEpisodeButton"
+                        Content="Change current episode"
+                        Width="300"
+                        Margin="0,0,0,50"
+                        Click="ChangeEpisodeButton_Click"/>
+
+                <!-- Recent Activity Log -->
+                <GroupBox Header="Recent Activity"
+                          Width="350"
+                          Margin="0,0,0,10"
+                          Height="330"
+                          Background="#FFEAE3" 
+                          Foreground="Black">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,23">
+                        <StackPanel x:Name="RecentActivityPanel" />
+                    </ScrollViewer>
+                </GroupBox>
             </StackPanel>
 
-            <Button x:Name="WatchNextButton"
-                    Content="▶ Watch the next episode"
-                    Width="300"
-                    Margin="0,10,0,10" Click="WatchNextButton_Click"/>
+            <!-- Right side stack -->
+            <StackPanel Grid.Column="1" Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Center" Width="250">
 
-            <Button x:Name="MarkWatchedButton"
-                    Content="✔ Mark as watched"
-                    Width="300"
-                    Margin="0,0,0,10" Click="MarkWatchedButton_Click"/>
+                <!-- Poster container -->
+                <Border Background="#F4C2C2" Width="200" Height="300" Margin="0,0,0,10">
+                    <Image x:Name="PosterImage"
+                           Stretch="UniformToFill"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Border>
 
-            <Button x:Name="ChangeEpisodeButton"
-                    Content="Change current episode"
-                    Width="300"
-                    Margin="0,0,0,50" Click="ChangeEpisodeButton_Click"/>
+                <StackPanel>
+                    <Grid Margin="0,0,0,5" Height="25">
+                        <ProgressBar x:Name="WatchProgressBar" 
+                                     Minimum="0" Maximum="100" 
+                                     Value="0" 
+                                     Height="25"
+                                     VerticalAlignment="Center"
+                                     Foreground="#F4C2C2"
+                                     Background="LightGray"/>
 
-            <!-- Recent Activity Log increased height -->
-            <GroupBox Header="Recent Activity" Width="350" Margin="0,0,0,10" Height="330">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,23">
-                    <StackPanel x:Name="RecentActivityPanel" />
-                </ScrollViewer>
-            </GroupBox>
-        </StackPanel>
+                        <TextBlock x:Name="WatchPercentageLabel"
+                                   Text="Watch Progress: 0%"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="Black"
+                                   TextAlignment="Center"/>
+                    </Grid>
+                    <TextBlock x:Name="WatchTimeLabel" Text="Time Watched: 0 min" FontWeight="Bold" TextAlignment="Center" Foreground="Black"/>
+                </StackPanel>
 
-        <!-- Right side stack -->
-        <StackPanel Grid.Column="1" Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Center" Width="250">
+                <!-- Top buttons -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,10">
+                    <Button x:Name="AddShowButton" Content="Add Show" Width="90" Margin="0,0,10,0" Click="AddShowButton_Click"/>
+                    <Button Content="Show Manager" Width="110"/>
+                </StackPanel>
 
-            <!-- Adjusted poster container to maintain ~2:3 aspect ratio -->
-            <Border Background="#DDD" Width="200" Height="300" Margin="0,0,0,10">
-                <Image x:Name="PosterImage"
-                   Stretch="UniformToFill"
-                   RenderOptions.BitmapScalingMode="HighQuality"/>  
-            </Border>
+                <!-- Log Output -->
+                <GroupBox Header="Log Output"
+                          Width="250"
+                          VerticalAlignment="Stretch"
+                          Background="#FFEAE3" 
+                          Foreground="Black">
+                    <TextBox x:Name="LogOutput"
+                             TextWrapping="Wrap"
+                             IsReadOnly="True"
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Disabled"
+                             Height="75"
+                             Background="White"
+                             Foreground="Black"/>
+                </GroupBox>
 
-            <StackPanel>
-                <Grid Margin="0,0,0,5" Height="25">
-                    <ProgressBar x:Name="WatchProgressBar" 
-                 Minimum="0" Maximum="100" 
-                 Value="0" 
-                 Height="25"
-                 VerticalAlignment="Center"
-                 Foreground="Green"
-                 Background="LightGray"/>
+                <!-- Bottom buttons -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                    <Button x:Name="Statistics" Content="Statistics" Width="90" Margin="0,0,10,0" Click="Statistics_Click"/>
+                    <Button Content="Settings" Width="110" Click="OpenSettings_Click"/>
+                </StackPanel>
 
-                    <TextBlock x:Name="WatchPercentageLabel"
-               Text="Watch Progress: 0%"
-               FontWeight="Bold"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center"
-               Foreground="Black"
-               TextAlignment="Center"/>
-                </Grid>
-                <TextBlock x:Name="WatchTimeLabel" Text="Time Watched: 0 min" FontWeight="Bold" TextAlignment="Center"/>
             </StackPanel>
 
-            <!-- Top buttons -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,10">
-                <Button x:Name="AddShowButton" Content="Add Show" Width="90" Margin="0,0,10,0" Click="AddShowButton_Click"/>
-                <Button Content="Show Manager" Width="110"/>
-            </StackPanel>
-
-            <!-- Log Output -->
-            <GroupBox Header="Log Output" Width="250" VerticalAlignment="Stretch">
-                <TextBox x:Name="LogOutput" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Height="75"/>
-            </GroupBox>
-
-            <!-- Bottom buttons aligned with top -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
-                <Button x:Name="Statistics" Content="Statistics" Width="90" Margin="0,0,10,0" Click="Statistics_Click"/>
-                <Button Content="Settings" Width="110" Click="OpenSettings_Click"/>
-            </StackPanel>
-
-        </StackPanel>
-
+        </Grid>
     </Grid>
+    
 
 </Window>

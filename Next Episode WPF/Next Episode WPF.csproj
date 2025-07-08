@@ -7,6 +7,14 @@
 		<Nullable>enable</Nullable>
 		<NoWarn>NU1701</NoWarn>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="data\background images\Flower.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="data\background images\Flower.png" />
+	</ItemGroup>
 	<ItemGroup>
 		<None Update="ffmpeg\ffmpeg.exe">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
