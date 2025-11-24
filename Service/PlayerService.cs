@@ -16,7 +16,7 @@ namespace Service
             try
             {
                 ResponseBody<AppSettings> settings = SettingsRepo.LoadSettings();
-                if (ResponseHelper.Check(settings))
+                if (!ResponseHelper.Check(settings))
                 {
                     return ResponseBody.Fail(settings.Message ?? "Failed to load settings.");
                 }

@@ -6,10 +6,15 @@
 		<UseWPF>true</UseWPF>
 		<Nullable>enable</Nullable>
 		<NoWarn>NU1701</NoWarn>
+		<ApplicationIcon>next episode icon.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <None Remove="data\background images\Flower.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="next episode icon.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
