@@ -1,0 +1,91 @@
+{
+  "Name": "Fallout",
+  "BasePath": "C:\\Users\\guusv\\Desktop\\Movies\\Fallout - Season 1 (2024)",
+  "Seasons": [
+    {
+      "Path": "C:\\Users\\guusv\\Desktop\\Movies\\Fallout - Season 1 (2024)",
+      "Number": 1,
+      "Episodes": [
+        {
+          "Season": 1,
+          "Number": 1,
+          "FilePath": "C:\\Users\\guusv\\Desktop\\Movies\\Fallout - Season 1 (2024)\\Fallout - S01E01 - The End.mkv",
+          "Title": "Fallout - S01E01 - The End",
+          "ShowName": "Fallout",
+          "Duration": "01:14:57.5300000",
+          "WhenWatched": "2025-09-27T20:50:50.9322216+02:00"
+        },
+        {
+          "Season": 1,
+          "Number": 2,
+          "FilePath": "C:\\Users\\guusv\\Desktop\\Movies\\Fallout - Season 1 (2024)\\Fallout - S01E02 - The Target.mkv",
+          "Title": "Fallout - S01E02 - The Target",
+          "ShowName": "Fallout",
+          "Duration": "01:05:30.7400000",
+          "WhenWatched": null
+        },
+        {
+          "Season": 1,
+          "Number": 3,
+          "FilePath": "C:\\Users\\guusv\\Desktop\\Movies\\Fallout - Season 1 (2024)\\Fallout - S01E03 - The Head.mkv",
+          "Title": "Fallout - S01E03 - The Head",
+          "ShowName": "Fallout",
+          "Duration": "00:56:59.8000000",
+          "WhenWatched": null
+        },
+        {
+          "Season": 1,
+          "Number": 4,
+          "FilePath": "C:\\Users\\guusv\\Desktop\\Movies\\Fallout - Season 1 (2024)\\Fallout - S01E04 - The Ghouls.mkv",
+          "Title": "Fallout - S01E04 - The Ghouls",
+          "ShowName": "Fallout",
+          "Duration": "00:48:40.5700000",
+          "WhenWatched": null
+        },
+        {
+          "Season": 1,
+          "Number": 5,
+          "FilePath": "C:\\Users\\guusv\\Desktop\\Movies\\Fallout - Season 1 (2024)\\Fallout - S01E05 - The Past.mkv",
+          "Title": "Fallout - S01E05 - The Past",
+          "ShowName": "Fallout",
+          "Duration": "00:45:20.4100000",
+          "WhenWatched": null
+        },
+        {
+          "Season": 1,
+          "Number": 6,
+          "FilePath": "C:\\Users\\guusv\\Desktop\\Movies\\Fallout - Season 1 (2024)\\Fallout - S01E06 - The Trap.mkv",
+          "Title": "Fallout - S01E06 - The Trap",
+          "ShowName": "Fallout",
+          "Duration": "01:00:40.9200000",
+          "WhenWatched": null
+        },
+        {
+          "Season": 1,
+          "Number": 7,
+          "FilePath": "C:\\Users\\guusv\\Desktop\\Movies\\Fallout - Season 1 (2024)\\Fallout - S01E07 - The Radio.mkv",
+          "Title": "Fallout - S01E07 - The Radio",
+          "ShowName": "Fallout",
+          "Duration": "01:01:03.4100000",
+          "WhenWatched": null
+        },
+        {
+          "Season": 1,
+          "Number": 8,
+          "FilePath": "C:\\Users\\guusv\\Desktop\\Movies\\Fallout - Season 1 (2024)\\Fallout - S01E08 - The Beginning.mkv",
+          "Title": "Fallout - S01E08 - The Beginning",
+          "ShowName": "Fallout",
+          "Duration": "01:02:26.5500000",
+          "WhenWatched": null
+        }
+      ],
+      "Duration": "07:55:39.9300000",
+      "DisplayName": "Season 01"
+    }
+  ],
+  "CurrentEpisodePath": "C:\\Users\\guusv\\Desktop\\Movies\\Fallout - Season 1 (2024)\\Fallout - S01E02 - The Target.mkv",
+  "IsFinished": false,
+  "Duration": "07:55:39.9300000",
+  "PosterFileName": "Fallout.jpg",
+  "TimeWatched": "01:14:57.5300000"
+}
