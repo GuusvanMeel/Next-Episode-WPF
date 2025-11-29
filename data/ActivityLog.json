@@ -3758,5 +3758,21 @@
     "Episode": 98,
     "EpisodeTitle": null,
     "Type": 0
+  },
+  {
+    "When": "2025-11-27T16:11:37.3556589+01:00",
+    "ShowTitle": "Hunter x Hunter",
+    "Season": 1,
+    "Episode": 99,
+    "EpisodeTitle": null,
+    "Type": 0
+  },
+  {
+    "When": "2025-11-27T22:16:43.6518217+01:00",
+    "ShowTitle": "Hunter x Hunter",
+    "Season": 1,
+    "Episode": 100,
+    "EpisodeTitle": null,
+    "Type": 0
   }
 ]
